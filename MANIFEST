@@ -2,6 +2,7 @@ MANIFEST
 MANIFEST.SKIP
 Makefile.PL
 README
+README.md
 lib/Docbook/Convert.pm
 lib/Docbook/Convert/Constant.pm
 lib/Docbook/Convert/Markdown/Util.pm

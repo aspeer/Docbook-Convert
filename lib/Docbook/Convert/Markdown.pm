@@ -12,8 +12,6 @@
 #
 
 
-
-
 #
 #
 package Docbook::Convert::Markdown;
