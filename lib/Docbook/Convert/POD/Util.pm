@@ -14,13 +14,13 @@
 
 #
 #
-package Docbook::Convert::Markdown::Util;
+package Docbook::Convert::POD::Util;
 
 
 #  Pragma
 #
 use strict qw(vars);
-use vars qw($VERSION $AUTOLOAD);
+use vars qw($VERSION);
 use warnings;
 no warnings qw(uninitialized);
 
@@ -41,53 +41,41 @@ $VERSION='0.001';
 
 
 sub _bold {
-    my ($self,$text)=@_;
-    return "**$text**";
+    my ($self, $text)=@_;
+    return "B<<< $text >>>";
 }
     
 
 sub _code {
-    my ($self,$text)=@_;
-    $text=~s/\`//g;
-    return "`$text`";
+    my ($self, $text)=@_;
+    $text=~s/C<<<\s+(.*?)\s+>>>/$1/g;
+    return "C<<< $text >>>";
 }
 
 sub _email {
-    my ($self,$email)=@_;
+    my ($self, $email)=@_;
     return "<$email>";
 }
     
 
 sub _h1 {
-    my ($self,$text)=@_;
-    return "# $text #";
+    my ($self, $text)=@_;
+    return "=head1 $text";
 }
     
 sub _h2 {
-    my ($self,$text)=@_;
-    return "## $text ##";
+    my ($self, $text)=@_;
+    return "=head2 $text";
 }
 
 sub _h3 {
-    my ($self,$text)=@_;
-    return "### $text ###";
+    my ($self, $text)=@_;
+    return "=head3 $text";
 }
 
 sub _h4 {
-    my ($self,$text)=@_;
-    return "#### $text ####";
-}
-
-sub _image {
-    my ($self, $url, $alt_text, $title, $attr_hr)=@_;
-    if ((my $width=$attr_hr->{'width'}) && !$NO_HTML) {
-        #  MD generally can't do width - convert to HTML link
-        return $self->_image_html($url, $alt_text, $title, $attr_hr);
-    }
-    else {
-        my $md_link=$self->_link($url, $alt_text, $title, $attr_hr);
-        return "!${md_link}";
-    }
+    my ($self, $text)=@_;
+    return "=head4 $text";
 }
 
 sub _image_html {
@@ -95,71 +83,78 @@ sub _image_html {
     my $width=$attr_hr->{'width'};
     $width && ($width=qq(width="$width"));
     my $html=<<HERE;
+=begin HTML
+
 <p><img src="$url" alt="$alt_text" $width /></p>
+
+=end HTML
 HERE
     return $html
 }
 
 
-sub _italic {
-    my ($self,$text)=@_;
-    return "*$text*";
+sub _image {
+    #  Only HTML images available in POD
+    shift()->_image_html(@_);
 }
+
+
+sub _italic {
+    my ($self, $text)=@_;
+    return "I<<< $text >>>";
+}
+
 
 sub _link {
     my ($self, $url, $text, $title)=@_;
-    #print "url $url\n";
-    if ($title) {
-        return "[$text]($url \"$title\")";
+    if (0) {
+        return "L<[$text|$url> \"$title\")";
     }
     else {
-        return "[$text]($url)";
+        return "L<$text|$url>";
     }
 }
     
-sub _list_item {
-    my ($self, $text)=@_;
-    return $text;
-}
-
 sub _list_begin {
-    return undef;
+    return "${CR2}=over";
 }
 
 sub _list_end {
-    return undef;
+    return "=back${CR2}";
 }
 
-sub _list {
-    my $self=shift;
-    my $text=shift;
-    return "+ $text";
+sub _list_item {
+    my ($self, $text)=@_;
+    return "=item $text";
 }
 
 sub _variablelist_join {
-    return "${CR2}${SP4}";
+    return "${CR2}";
 }
 
 sub _listitem_join {
-    &_variablelist_join(@_);
+    &_variablelist_join(@_);;
 }
 
 sub _anchor {
-
-    my ($self, $id)=@_;
-    my $anchor=qq(<a name="$id"></a>);
-    return $anchor;
-    
+    return undef;
 }
+1;
+
 
 sub _anchor_fix {
 
-    #  Nothing to fix in markdown
+    #  Fix anchor refs to point to POD headers
     #
-    my ($self, $output)=@_;
+    my ($self, $output, $id_hr)=@_;
+    while (my ($id, $title)=each %{$self->{'_id'}}) {
+        $title=~s/\W+/-/g;
+        $output=~s/L\<(.*?)\|#\Q$id\E/L\<$1|\"$title\"/g;
+    }
     return $output;
     
 }
+
 
 1;
 __END__

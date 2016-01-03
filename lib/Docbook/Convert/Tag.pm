@@ -14,20 +14,20 @@
 
 #
 #
-package Docbook::Convert::POD;
+package Docbook::Convert::Tag;
 
 
 #  Pragma
 #
 use strict qw(vars);
-use vars qw($VERSION);
+use vars qw($VERSION $AUTOLOAD);
 use warnings;
 no warnings qw(uninitialized);
 
 
 #  External modules
 #
-#use Docbook::Convert::POD::Util;
+#use Docbook::Convert::Markdown::Util;
 use Docbook::Convert::Constant;
 use Data::Dumper;
 
@@ -35,8 +35,6 @@ use Data::Dumper;
 #  Inherit Base functions (find_node etc.)
 #
 use base Docbook::Convert::Base;
-use base Docbook::Convert::Common;
-use base Docbook::Convert::POD::Util;
 
 
 #  Version information in a format suitable for CPAN etc. Must be
@@ -47,39 +45,31 @@ $VERSION='0.001';
 
 #  Make synonyms
 #
-&create_tag_synonym; 
+#&create_tag_synonym; 
+
+
+#  All done, init finished
+#
+1;
+
 
 #===================================================================================================
 
-sub new {
 
-    #  New instance
-    #
-    my $class=shift();
-    return bless((my $self={}), ref($class) || $class );
+sub para {
 
-}
-
-sub create_tag_synonym {
-
-    #  Create tag equivalents
-    #
-    my %tag_synonym=(
-        screen          => [qw(programlisting)],
-        _text           => [qw(blockquote)],
-    );
-    while (my($tag, $tag_synonym_ar)=each %tag_synonym) {
-        foreach my $tag_synonym (@{$tag_synonym_ar}) {
-            *{$tag_synonym}=sub { shift()->$tag(@_) }
-        }
-    }
-}
-
-sub text {
     my ($self, $data_ar)=@_;
     my $text=$self->find_node_text($data_ar, $NULL);
+    $text=~s/ +/ /g;
     return $text;
+    
 }
 
-1;
-__END__
+
+sub command {
+    my ($self, $data_ar)=@_;
+    my $text=$self->find_node_text($data_ar, $NULL);
+    return $self->_code($text);
+    #return &_code();
+}
+

@@ -17,6 +17,8 @@ ExtUtils::Git is a ExtUtils::MakeMaker helper module that will add
  around git related operations as they apply to Perl modules and provide
  other (sometime not git related) Makefile targets to improve
  productivity.
+ 
+ ***
 
 This module will undertake workflow check such as ensuring that all
  files in a Module MANIFEST file are present in git during checkin. It will

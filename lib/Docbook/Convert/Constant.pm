@@ -1,7 +1,7 @@
 #
 #  This file is part of Docbook::Convert.
 #
-#  This software is copyright (c) 2015 by Andrew Speer <andrew.speer@isolutions.com.au>.
+#  This software is copyright (c) 2016 by Andrew Speer <andrew.speer@isolutions.com.au>.
 #
 #  This is free software; you can redistribute it and/or modify it under
 #  the same terms as the Perl 5 programming language system itself.
@@ -91,6 +91,12 @@ my $constant_local_fn="${module_fn}.local";
     SP4                 => ' ' x 4,
     SP8                 => ' ' x 8,
     NULL                => \undef,
+    
+    
+    #  Default formatting options
+    #
+    NO_HTML             => 0,
+    NO_IMAGE_FETCH      => 0,
 
 
     #  Local constants override anything above
