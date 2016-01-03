@@ -44,7 +44,7 @@ sub _bold {
     my ($self, $text)=@_;
     return "B<<< $text >>>";
 }
-    
+
 
 sub _code {
     my ($self, $text)=@_;
@@ -52,31 +52,36 @@ sub _code {
     return "C<<< $text >>>";
 }
 
+
 sub _email {
     my ($self, $email)=@_;
     return "<$email>";
 }
-    
+
 
 sub _h1 {
     my ($self, $text)=@_;
     return "=head1 $text";
 }
-    
+
+
 sub _h2 {
     my ($self, $text)=@_;
     return "=head2 $text";
 }
+
 
 sub _h3 {
     my ($self, $text)=@_;
     return "=head3 $text";
 }
 
+
 sub _h4 {
     my ($self, $text)=@_;
     return "=head4 $text";
 }
+
 
 sub _image_html {
     my ($self, $url, $alt_text, $title, $attr_hr)=@_;
@@ -94,6 +99,7 @@ HERE
 
 
 sub _image {
+
     #  Only HTML images available in POD
     shift()->_image_html(@_);
 }
@@ -114,27 +120,33 @@ sub _link {
         return "L<$text|$url>";
     }
 }
-    
+
+
 sub _list_begin {
     return "${CR2}=over";
 }
 
+
 sub _list_end {
     return "=back${CR2}";
 }
+
 
 sub _list_item {
     my ($self, $text)=@_;
     return "=item $text";
 }
 
+
 sub _variablelist_join {
     return "${CR2}";
 }
 
+
 sub _listitem_join {
-    &_variablelist_join(@_);;
+    &_variablelist_join(@_);
 }
+
 
 sub _anchor {
     return undef;
@@ -152,7 +164,7 @@ sub _anchor_fix {
         $output=~s/L\<(.*?)\|#\Q$id\E/L\<$1|\"$title\"/g;
     }
     return $output;
-    
+
 }
 
 

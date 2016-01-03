@@ -61,7 +61,7 @@ sub find_node_recurse {
     my ($self, $result_ar, $data_ar, $tag)=@_;
     if ($data_ar->[$NODE_IX] eq $tag) {
         push @{$result_ar}, $data_ar;
-        delete $self ->{'_autoload'}{$data_ar};
+        delete $self->{'_autoload'}{$data_ar};
     }
     else {
         foreach my $data_child_ar (@{$data_ar->[$CHLD_IX]}) {
@@ -81,10 +81,12 @@ sub find_node_tag_text {
     }
     my @text;
     foreach my $tag (@{$tag_ar}) {
+
         #my @tag;
         #print "tag recurse start: $tag\n";
         $self->find_node_tag_text_recurse($data_ar, $tag, \@text) ||
-            return err();
+            return err ();
+
         #print "tag recurse end\n";
         #push @text, [@tag];
     }
@@ -103,7 +105,7 @@ sub find_node_tag_text {
     else {
         return \@text;
     }
-    
+
 }
 
 
@@ -113,12 +115,12 @@ sub find_node_tag_text_recurse {
     #
     my ($self, $data_ar, $tag, $text_ar, $tag_found)=@_;
     if ((my $node_tag=$data_ar->[$NODE_IX]) eq $tag) {
-    
+
         #  Only return first hit. If already text in array just
         #  return;
         #
         return $text_ar if @{$text_ar};
-        
+
         #  Else proceed
         #
         $tag_found++;
@@ -134,7 +136,7 @@ sub find_node_tag_text_recurse {
         }
         if ($tag_found && ref($data_child_ar)) {
             delete $self->{'_autoload'}{$data_child_ar};
-            $self->{'_autotext'}{$data_child_ar}=$data_child_ar unless  
+            $self->{'_autotext'}{$data_child_ar}=$data_child_ar unless
                 exists $self->{'_autotext'}{$data_child_ar}
         }
     }
@@ -148,9 +150,9 @@ sub find_node_tag_text_recurse {
 sub find_node_text {
 
     my ($self, $data_ar, $join)=@_;
-    my $tag = $data_ar->[$NODE_IX];
+    my $tag=$data_ar->[$NODE_IX];
     return $self->find_node_tag_text($data_ar, $tag, $join);
-    
+
 }
 
 
@@ -161,19 +163,21 @@ sub find_parent {
         $tag_ar=[split('\|', $tag_ar)];
     }
     foreach my $tag (@{$tag_ar}) {
+
         #print "test $tag vs $data_ar->[$NODE_IX]\n";
         if ((my $t=$data_ar->[$NODE_IX]) eq $tag) {
             return $data_ar;
         }
+
         #elsif (my $data_parent_ar=$data_ar->[$PRNT_IX]) {
         #    return $self->find_parent($data_parent_ar, $tag_ar);
         #}
     }
     if (my $data_parent_ar=$data_ar->[$PRNT_IX]) {
-            return $self->find_parent($data_parent_ar, $tag_ar);
+        return $self->find_parent($data_parent_ar, $tag_ar);
     }
     return undef;
-    
+
 }
 
 
@@ -184,14 +188,14 @@ sub load_imagemagick {
     eval {
         require Image::Magick;
     } || do {
-        return err("unable to load Image::Magic module, $@");
+        return err ("unable to load Image::Magic module, $@");
     };
     eval {
         require LWP::Simple;
     } || do {
-        return err("unable to load LWP::Simple module, $@");
+        return err ("unable to load LWP::Simple module, $@");
     };
-    
+
 }
 
 
@@ -199,16 +203,16 @@ sub image_getwidth {
 
     my ($self, $url)=@_;
     $self->load_imagemagick() ||
-        return err();
+        return err ();
     my $width;
     if (my $image=LWP::Simple::get($url)) {
-        my $magick_or=Image::Magick->new(magick=>'jpg');
+        my $magick_or=Image::Magick->new(magick => 'jpg');
         $magick_or->BlobToImage($image);
         $width=$magick_or->Get('width');
     }
     return $width;
-    
-}    
+
+}
 
 
 sub AUTOLOAD {

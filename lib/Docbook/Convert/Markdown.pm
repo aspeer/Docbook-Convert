@@ -47,30 +47,31 @@ $VERSION='0.001';
 
 #  Make synonyms
 #
-&create_tag_synonym; 
+&create_tag_synonym;
 
 #===================================================================================================
 
-sub new { ## no subsort
+
+sub new {    ## no subsort
 
     #  New instance
     #
     my ($class, @param)=@_;
-    return bless((my $self={ @param }), ref($class) || $class );
+    return bless((my $self={@param}), ref($class) || $class);
 
 }
 
 
-sub create_tag_synonym { ## no subsort
+sub create_tag_synonym {    ## no subsort
 
     #  Create markdown equivalents
     #
     my $self=shift();
     my %tag_synonym=(
     );
-    while (my($tag, $tag_synonym_ar)=each %tag_synonym) {
+    while (my ($tag, $tag_synonym_ar)=each %tag_synonym) {
         foreach my $tag_synonym (@{$tag_synonym_ar}) {
-            *{$tag_synonym}=sub { shift()->$tag(@_) }
+            *{$tag_synonym}=sub {shift()->$tag(@_)}
         }
     }
 }
@@ -97,13 +98,14 @@ sub _dont_escape {
         programlisting
         term
     );
+
     if ($self->find_parent($data_ar, \@tag)) {
         return 1;
     }
     else {
         return undef;
     }
-    
+
 }
 
 
@@ -113,10 +115,10 @@ sub _escape {
     use CGI;
     $text=~s/\s+([*_`\\{}\[\]\(\)#+-\.\!]+)/ \\$1/g;
     $text=CGI::escapeHTML($text);
-    
+
     return $text;
-    
-}    
-    
+
+}
+
 1;
 __END__

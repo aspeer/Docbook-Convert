@@ -12,7 +12,6 @@
 #
 
 
-
 #  Package Constants
 #
 package Docbook::Convert::Constant;
@@ -60,43 +59,43 @@ my $constant_local_fn="${module_fn}.local";
 
     #  XML Data array index locations
     #
-    NODE_IX     => 0,
-    CHLD_IX     => 1,
-    ATTR_IX     => 2,
-    LINE_IX     => 3,
-    COLM_IX     => 4,
-    PRNT_IX     => 5,
-    
-    
+    NODE_IX => 0,
+    CHLD_IX => 1,
+    ATTR_IX => 2,
+    LINE_IX => 3,
+    COLM_IX => 4,
+    PRNT_IX => 5,
+
+
     #  Handler nicknames
     #
-    HANDLER_HR  => {
-    
-        markdown        => 'Docbook::Convert::Markdown',
-        pod             => 'Docbook::Convert::POD'
-        
+    HANDLER_HR => {
+
+        markdown => 'Docbook::Convert::Markdown',
+        pod      => 'Docbook::Convert::POD'
+
     },
-    
-    
+
+
     #  Default handler
     #
-    HANDLER_DEFAULT     => 'markdown',
-    
-    
+    HANDLER_DEFAULT => 'markdown',
+
+
     #  Markdown separators
     #
-    CR                  => $/,
-    CR2                 => $/ x 2, 
-    SP                  => ' ',
-    SP4                 => ' ' x 4,
-    SP8                 => ' ' x 8,
-    NULL                => \undef,
-    
-    
+    CR   => $/,
+    CR2  => $/ x 2,
+    SP   => ' ',
+    SP4  => ' ' x 4,
+    SP8  => ' ' x 8,
+    NULL => \undef,
+
+
     #  Default formatting options
     #
-    NO_HTML             => 0,
-    NO_IMAGE_FETCH      => 0,
+    NO_HTML        => 0,
+    NO_IMAGE_FETCH => 0,
 
 
     #  Local constants override anything above

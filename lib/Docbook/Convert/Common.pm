@@ -45,26 +45,26 @@ $VERSION='0.001';
 
 #  Make synonyms
 #
-&create_tag_synonym; 
+&create_tag_synonym;
 
 
 #===================================================================================================
 
 
-sub create_tag_synonym { ## no subsort
+sub create_tag_synonym {    ## no subsort
 
     #  Create tag formatting equivalents
     #
     my %tag_synonym=(
-        command         => [qw(classname parameter filename markup)],
-        refsection      => [qw(refsect1)],
-        para            => [qw(simpara)],
-        _text           => [qw(refentry article literallayout)],
-        _null           => [qw(imageobject)]
+        command    => [qw(classname parameter filename markup)],
+        refsection => [qw(refsect1)],
+        para       => [qw(simpara)],
+        _text      => [qw(refentry article literallayout)],
+        _null      => [qw(imageobject)]
     );
-    while (my($tag, $tag_synonym_ar)=each %tag_synonym) {
+    while (my ($tag, $tag_synonym_ar)=each %tag_synonym) {
         foreach my $tag_synonym (@{$tag_synonym_ar}) {
-            *{$tag_synonym}=sub { shift()->$tag(@_) }
+            *{$tag_synonym}=sub {shift()->$tag(@_)}
         }
     }
 }
@@ -73,6 +73,7 @@ sub create_tag_synonym { ## no subsort
 sub _text {
     my ($self, $data_ar)=@_;
     my $text=$self->find_node_text($data_ar, $CR2);
+
     #  Clean up and extra blank lines
     $text=~s/^(\s*${CR}){2,}/${CR}/gm;
     return $text;
@@ -107,15 +108,18 @@ sub blockquote {
     return $text;
 }
 
+
 sub cmdsynopsis {
     my ($self, $data_ar)=@_;
     my $text=$self->find_node_text($data_ar, $SP);
     return $self->_code($text);
 }
 
+
 sub command {
     my ($self, $data_ar)=@_;
     if ($self->find_parent($data_ar, 'screen')) {
+
         #  render later
         return $data_ar;
     }
@@ -226,9 +230,11 @@ sub listitem {
     return $text;
 }
 
+
 sub mediaobject {
     my ($self, $data_ar)=@_;
     if ($self->find_parent($data_ar, 'figure')) {
+
         #  render later
         return $data_ar;
     }
@@ -236,7 +242,8 @@ sub mediaobject {
         return $self->_image_build($data_ar);
     }
 }
-        
+
+
 sub option {
     my ($self, $data_ar)=@_;
     my $text=$self->find_node_text($data_ar, $NULL);
@@ -249,8 +256,9 @@ sub para {
     my ($self, $data_ar)=@_;
     my $text=$self->find_node_text($data_ar, $NULL);
     return $text;
-    
+
 }
+
 
 sub programlisting {
     my ($self, $data_ar)=@_;
@@ -261,8 +269,9 @@ sub programlisting {
     return $text
 }
 
+
 sub refmeta {
-    my ($self, $data_ar)=@_;
+    my ($self,          $data_ar)=@_;
     my ($refentrytitle, $manvolnum)=
         $self->find_node_tag_text($data_ar, 'refentrytitle|manvolnum', $NULL);
     my $text=$self->_h1("$refentrytitle $manvolnum");
@@ -272,15 +281,16 @@ sub refmeta {
 
 sub refnamediv {
 
-    my ($self, $data_ar)=@_;
+    my ($self,    $data_ar)=@_;
     my ($refname, $refpurpose)=
         $self->find_node_tag_text($data_ar, 'refname|refpurpose');
     my $text=$self->_h2('NAME') . $CR2 . join(' - ', grep {$_} $refname, $refpurpose);
     return $text;
 }
 
+
 sub refsection {
-    my ($self, $data_ar)=@_;
+    my ($self,  $data_ar)=@_;
     my ($title, $subtitle)=
         $self->find_node_tag_text($data_ar, 'title|subtitle');
     my $text=$self->find_node_text($data_ar, $CR2);
@@ -300,7 +310,7 @@ sub appendix {
         if ($int=int($num/26)) {
             $cr->($cr, ($int-1));
         }
-        push @label, chr(($num%26)+65);
+        push @label, chr(($num % 26)+65);
     };
     $cr->($cr, $app_ix);
     my $label=join(undef, @label);
@@ -313,15 +323,15 @@ sub appendix {
 }
 
 
-sub sect1 {    
+sub sect1 {
     my ($self, $data_ar)=@_;
     my $count_sect1=++$self->{'_sect1'};
     delete @{$self}{qw(_sect2 _sect3 _sect4)};
     return $self->_sect($data_ar, $count_sect1);
 }
 
-        
-sub sect2 {    
+
+sub sect2 {
     my ($self, $data_ar)=@_;
     my $count_sect1=($self->{'_sect1'}+1);
     my $count_sect2=++$self->{'_sect2'};
@@ -330,7 +340,8 @@ sub sect2 {
     return $self->_sect($data_ar, $count);
 }
 
-sub sect3 {    
+
+sub sect3 {
     my ($self, $data_ar)=@_;
     my $count_sect1=($self->{'_sect1'}+1);
     my $count_sect2=($self->{'_sect2'}+1);
@@ -340,7 +351,8 @@ sub sect3 {
     return $self->_sect($data_ar, $count);
 }
 
-sub sect4 {    
+
+sub sect4 {
     my ($self, $data_ar)=@_;
     my $count_sect1=($self->{'_sect1'}+1);
     my $count_sect2=($self->{'_sect2'}+1);
@@ -349,6 +361,7 @@ sub sect4 {
     my $count="$count_sect1.$count_sect2.$count_sect3.$count_sect4";
     return $self->_sect($data_ar, $count);
 }
+
 
 sub _sect {
     my ($self, $data_ar, $count)=@_;
@@ -379,8 +392,9 @@ sub screen {
     my ($self, $data_ar)=@_;
     my $text=$self->find_node_text($data_ar, $NULL);
     my @text=($text=~/^(.*)$/gm);
-    return $CR2 . join($CR, map { "${SP4}$_" } @text) . $CR2;
+    return $CR2 . join($CR, map {"${SP4}$_"} @text) . $CR2;
 }
+
 
 sub term {
     my ($self, $data_ar)=@_;
@@ -398,11 +412,13 @@ sub _image_build {
     my $alt_text2=$image_data_attr_hr->{'annotations'};
     my $alt_text=$alt_text1 || $alt_text2;
     my $url=$image_data_attr_hr->{'fileref'};
+
     if ((my $scale=$image_data_attr_hr->{'scale'}) && !$NO_HTML && !$NO_IMAGE_FETCH) {
+
         #  Get Image width
         #
         my $width=$self->image_getwidth($url);
-        $width*=($scale/100);
+        $width *= ($scale/100);
         $image_data_attr_hr->{'width'}=$width;
     }
     return $self->_image($url, $alt_text, $title, $image_data_attr_hr);

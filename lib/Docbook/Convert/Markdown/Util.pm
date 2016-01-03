@@ -41,46 +41,52 @@ $VERSION='0.001';
 
 
 sub _bold {
-    my ($self,$text)=@_;
+    my ($self, $text)=@_;
     return "**$text**";
 }
-    
+
 
 sub _code {
-    my ($self,$text)=@_;
+    my ($self, $text)=@_;
     $text=~s/\`//g;
     return "`$text`";
 }
 
+
 sub _email {
-    my ($self,$email)=@_;
+    my ($self, $email)=@_;
     return "<$email>";
 }
-    
+
 
 sub _h1 {
-    my ($self,$text)=@_;
+    my ($self, $text)=@_;
     return "# $text #";
 }
-    
+
+
 sub _h2 {
-    my ($self,$text)=@_;
+    my ($self, $text)=@_;
     return "## $text ##";
 }
 
+
 sub _h3 {
-    my ($self,$text)=@_;
+    my ($self, $text)=@_;
     return "### $text ###";
 }
 
+
 sub _h4 {
-    my ($self,$text)=@_;
+    my ($self, $text)=@_;
     return "#### $text ####";
 }
+
 
 sub _image {
     my ($self, $url, $alt_text, $title, $attr_hr)=@_;
     if ((my $width=$attr_hr->{'width'}) && !$NO_HTML) {
+
         #  MD generally can't do width - convert to HTML link
         return $self->_image_html($url, $alt_text, $title, $attr_hr);
     }
@@ -89,6 +95,7 @@ sub _image {
         return "!${md_link}";
     }
 }
+
 
 sub _image_html {
     my ($self, $url, $alt_text, $title, $attr_hr)=@_;
@@ -102,12 +109,14 @@ HERE
 
 
 sub _italic {
-    my ($self,$text)=@_;
+    my ($self, $text)=@_;
     return "*$text*";
 }
 
+
 sub _link {
     my ($self, $url, $text, $title)=@_;
+
     #print "url $url\n";
     if ($title) {
         return "[$text]($url \"$title\")";
@@ -116,19 +125,23 @@ sub _link {
         return "[$text]($url)";
     }
 }
-    
+
+
 sub _list_item {
     my ($self, $text)=@_;
     return $text;
 }
 
+
 sub _list_begin {
     return undef;
 }
 
+
 sub _list_end {
     return undef;
 }
+
 
 sub _list {
     my $self=shift;
@@ -136,21 +149,25 @@ sub _list {
     return "+ $text";
 }
 
+
 sub _variablelist_join {
     return "${CR2}${SP4}";
 }
 
+
 sub _listitem_join {
     &_variablelist_join(@_);
 }
+
 
 sub _anchor {
 
     my ($self, $id)=@_;
     my $anchor=qq(<a name="$id"></a>);
     return $anchor;
-    
+
 }
+
 
 sub _anchor_fix {
 
@@ -158,7 +175,7 @@ sub _anchor_fix {
     #
     my ($self, $output)=@_;
     return $output;
-    
+
 }
 
 1;

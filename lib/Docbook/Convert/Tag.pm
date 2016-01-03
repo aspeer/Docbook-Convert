@@ -45,7 +45,7 @@ $VERSION='0.001';
 
 #  Make synonyms
 #
-#&create_tag_synonym; 
+#&create_tag_synonym;
 
 
 #  All done, init finished
@@ -62,7 +62,7 @@ sub para {
     my $text=$self->find_node_text($data_ar, $NULL);
     $text=~s/ +/ /g;
     return $text;
-    
+
 }
 
 
@@ -70,6 +70,7 @@ sub command {
     my ($self, $data_ar)=@_;
     my $text=$self->find_node_text($data_ar, $NULL);
     return $self->_code($text);
+
     #return &_code();
 }
 
