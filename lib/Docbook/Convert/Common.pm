@@ -27,7 +27,6 @@ no warnings qw(uninitialized);
 
 #  External modules
 #
-#use Docbook::Convert::Markdown::Util;
 use Docbook::Convert::Constant;
 use Data::Dumper;
 
@@ -45,29 +44,10 @@ $VERSION='0.001';
 
 #  Make synonyms
 #
-&create_tag_synonym;
+&Docbook::Convert::Base::create_tag_synonym($ALL_TAG_SYNONYM_HR);
 
 
 #===================================================================================================
-
-
-sub create_tag_synonym {    ## no subsort
-
-    #  Create tag formatting equivalents
-    #
-    my %tag_synonym=(
-        command    => [qw(classname parameter filename markup)],
-        refsection => [qw(refsect1)],
-        para       => [qw(simpara)],
-        _text      => [qw(refentry article literallayout)],
-        _null      => [qw(imageobject)]
-    );
-    while (my ($tag, $tag_synonym_ar)=each %tag_synonym) {
-        foreach my $tag_synonym (@{$tag_synonym_ar}) {
-            *{$tag_synonym}=sub {shift()->$tag(@_)}
-        }
-    }
-}
 
 
 sub _text {
@@ -143,11 +123,21 @@ sub emphasis {
     my $attr_hr=$data_ar->[$ATTR_IX];
     my $role=$attr_hr->{'role'};
     if ($role eq 'bold') {
-        $self->_bold($text);
+        return $self->_bold($text);
+    }
+    elsif ($role eq 'strikethrough') {
+        return $self->_strikethrough($text);
     }
     else {
-        $self->_italic($text);
+        return $self->_italic($text);
     }
+}
+
+
+sub replaceable0 {
+    my ($self, $data_ar)=@_;
+    my $text=$self->find_node_text($data_ar, $NULL);
+    return $self->_italic($text);
 }
 
 
@@ -170,7 +160,7 @@ sub itemizedlist0 {
 sub itemizedlist {
     my ($self, $data_ar)=@_;
     my @list;
-    foreach my $text ($self->find_node_text($data_ar)) {
+    foreach my $text (@{$self->find_node_text($data_ar)}) {
         push @list, $self->_list_item("* $text");
     }
     return join($CR2, grep {$_} $self->_list_begin(), @list, $self->_list_end);
@@ -191,7 +181,7 @@ sub variablelist {
 sub orderedlist {
     my ($self, $data_ar)=@_;
     my (@list, $count);
-    foreach my $text ($self->find_node_text($data_ar)) {
+    foreach my $text (@{$self->find_node_text($data_ar)}) {
         $count++;
         push @list, $self->_list_item("$count. $text");
     }
@@ -234,7 +224,6 @@ sub listitem {
 sub mediaobject {
     my ($self, $data_ar)=@_;
     if ($self->find_parent($data_ar, 'figure')) {
-
         #  render later
         return $data_ar;
     }
@@ -271,7 +260,7 @@ sub programlisting {
 
 
 sub refmeta {
-    my ($self,          $data_ar)=@_;
+    my ($self, $data_ar)=@_;
     my ($refentrytitle, $manvolnum)=
         $self->find_node_tag_text($data_ar, 'refentrytitle|manvolnum', $NULL);
     my $text=$self->_h1("$refentrytitle $manvolnum");
@@ -281,9 +270,9 @@ sub refmeta {
 
 sub refnamediv {
 
-    my ($self,    $data_ar)=@_;
+    my ($self, $data_ar)=@_;
     my ($refname, $refpurpose)=
-        $self->find_node_tag_text($data_ar, 'refname|refpurpose');
+        $self->find_node_tag_text($data_ar, 'refname|refpurpose', $NULL);
     my $text=$self->_h2('NAME') . $CR2 . join(' - ', grep {$_} $refname, $refpurpose);
     return $text;
 }
@@ -292,7 +281,7 @@ sub refnamediv {
 sub refsection {
     my ($self,  $data_ar)=@_;
     my ($title, $subtitle)=
-        $self->find_node_tag_text($data_ar, 'title|subtitle');
+        $self->find_node_tag_text($data_ar, 'title|subtitle', $NULL);
     my $text=$self->find_node_text($data_ar, $CR2);
     return join($CR2, $self->_h2($title), $text);
 }
@@ -315,7 +304,7 @@ sub appendix {
     $cr->($cr, $app_ix);
     my $label=join(undef, @label);
     my ($title, $subtitle)=
-        $self->find_node_tag_text($data_ar, 'title|subtitle');
+        $self->find_node_tag_text($data_ar, 'title|subtitle', $NULL);
     my $text=$self->find_node_text($data_ar, $CR2);
     my $appendix=$self->_h1("Appendix $label: $title");
     return join($CR2, $appendix, $text);
@@ -382,7 +371,8 @@ sub _sect {
 
 sub refsynopsisdiv {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
+    #my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->find_node_text($data_ar, $CR2);
     $text=$self->_h2('SYNOPSIS') . $CR2 . $text;
     return $text;
 }
@@ -400,6 +390,15 @@ sub term {
     my ($self, $data_ar)=@_;
     my $text=$self->find_node_text($data_ar, $NULL);
     return $self->_bold($self->_code($text));
+}
+
+
+sub warning { # synonym for caution, important, note, tip
+    my ($self, $data_ar)=@_;
+    my $tag=$data_ar->[$NODE_IX];
+    my $text=$self->find_node_text($data_ar, $NULL);
+    $tag=uc($tag);
+    return $CR2 . "$tag: $text";
 }
 
 

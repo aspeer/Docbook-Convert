@@ -46,6 +46,12 @@ sub _bold {
 }
 
 
+sub _strikethrough {
+    my ($self, $text)=@_;
+    return "~~$text~~";
+}
+    
+
 sub _code {
     my ($self, $text)=@_;
     $text=~s/\`//g;

@@ -46,6 +46,13 @@ sub _bold {
 }
 
 
+sub _strikethrough {
+    #  No strikethrough in POD
+    my ($self, $text)=@_;
+    return $text;
+}
+
+
 sub _code {
     my ($self, $text)=@_;
     $text=~s/C<<<\s+(.*?)\s+>>>/$1/g;

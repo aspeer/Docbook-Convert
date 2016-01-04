@@ -43,11 +43,6 @@ use Data::Dumper;
 $VERSION='0.001';
 
 
-#  All done, init finished
-#
-1;
-
-
 #===================================================================================================
 
 
@@ -263,7 +258,7 @@ sub render {
     $output=$render_or->_anchor_fix($output, $self->{'_id'});
 
 
-    #  Any errors/warnings ?
+    #  Any errors/warnings for unhandled tags ?
     #
     if (my $hr=$render_or->{'_autoload'}) {
         my @data_ar=sort {($a->[$NODE_IX] cmp $b->[$NODE_IX]) or ($a->[$LINE_IX] <=> $b->[$LINE_IX])} grep {$_} values(%{$hr});

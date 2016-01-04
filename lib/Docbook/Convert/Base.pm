@@ -39,6 +39,15 @@ $VERSION='0.001';
 
 #===================================================================================================
 
+sub new {    ## no subsort
+
+    #  New instance
+    #
+    my ($class, @param)=@_;
+    return bless((my $self={@param}), ref($class) || $class);
+
+}
+
 
 sub find_node {
 
@@ -81,14 +90,50 @@ sub find_node_tag_text {
     }
     my @text;
     foreach my $tag (@{$tag_ar}) {
-
-        #my @tag;
-        #print "tag recurse start: $tag\n";
-        $self->find_node_tag_text_recurse($data_ar, $tag, \@text) ||
+        my @tag;
+        $self->find_node_tag_text_recurse($data_ar, $tag, \@tag) ||
             return err ();
+        if (ref($join) eq 'SCALAR') {
+            push @text, join(${$join}, @tag);
+        }
+        elsif (ref($join) eq 'CODE') {
+            push @text, $join->(\@tag);
+        }
+        elsif ($join) {
+            push @text, join($join, @tag);
+        }
+        else {
+            push @text, \@tag;
+        }
+    }
+    #elsif (wantarray() && (@{$tag_ar} > 1)) {
+    #    return @text;
+    #}
+    if (wantarray()) {
+        return @text;
+    }
+    else {
+        return $text[0];
+    }
 
-        #print "tag recurse end\n";
-        #push @text, [@tag];
+}
+
+sub find_node_tag_text0 {
+
+    my ($self, $data_ar, $tag_ar, $join)=@_;
+    $tag_ar ||= [$data_ar->[$NODE_IX]];
+    unless (ref($tag_ar)) {
+        $tag_ar=[split('\|', $tag_ar)];
+    }
+    my @text;
+    foreach my $tag (@{$tag_ar}) {
+
+        #$self->find_node_tag_text_recurse($data_ar, $tag, \@text) ||
+        #    return err ();
+        my @tag;
+        $self->find_node_tag_text_recurse($data_ar, $tag, \@tag) ||
+            return err ();
+        push @text, [@tag];
     }
     if (ref($join) eq 'SCALAR') {
         return join(${$join}, @text);
@@ -99,8 +144,11 @@ sub find_node_tag_text {
     elsif ($join) {
         return join($join, @text);
     }
-    elsif (wantarray()) {
+    elsif (wantarray() && (@{$tag_ar} > 1)) {
         return @text;
+    }
+    elsif (wantarray()) {
+        return @{$text[0]};
     }
     else {
         return \@text;
@@ -212,6 +260,20 @@ sub image_getwidth {
     }
     return $width;
 
+}
+
+
+sub create_tag_synonym { 
+
+    #  Create tag equivalents
+    #
+    my ($tag_synonym_hr, $package)=@_;
+    $package ||= (caller())[0];
+    while (my ($tag, $tag_synonym_ar)=each %{$tag_synonym_hr}) {
+        foreach my $tag_synonym (@{$tag_synonym_ar}) {
+            *{"${package}::${tag_synonym}"}=sub {shift()->$tag(@_)}
+        }
+    }
 }
 
 

@@ -90,6 +90,43 @@ my $constant_local_fn="${module_fn}.local";
     SP4  => ' ' x 4,
     SP8  => ' ' x 8,
     NULL => \undef,
+    
+    
+    #  Don't escape the following Docbook tags in Markdown converter
+    #
+    MD_DONT_ESCAPE_AR => [qw(
+        command
+        screen
+        arg
+        markup
+        programlisting
+        term
+    )],
+    
+    
+    #  Tag synonyms for Markdown
+    #
+    MD_TAG_SYNONYM_HR => {},
+    
+    
+    #  Tag synonym for POD
+    #
+    POD_TAG_SYNONYM_HR  => {
+        screen => [qw(programlisting)],
+        _text  => [qw(blockquote)],
+    },
+    
+    
+    #  Common tag synonyms
+    #
+    ALL_TAG_SYNONYM_HR   => {
+        command    => [qw(classname parameter filename markup)],
+        refsection => [qw(refsect1)],
+        para       => [qw(simpara)],
+        warning    => [qw(caution important note tip)],
+        _text      => [qw(refentry article literallayout)],
+        _null      => [qw(imageobject)]
+    },
 
 
     #  Default formatting options
