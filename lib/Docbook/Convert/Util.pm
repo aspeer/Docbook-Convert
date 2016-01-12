@@ -88,7 +88,7 @@ sub msg {
 
     #  Print message
     #
-    CORE::print &fmt(@_), "\n";
+    CORE::print &fmt(@_), "\n" if $VERBOSE;;
 
 }
 

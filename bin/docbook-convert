@@ -73,6 +73,14 @@ sub getopt {
         exit 0
     };
     
+    
+    #  Debug
+    #
+    $opt{'dumpopt'} && do {
+        print Dumper([sort @{$GETOPT_AR}, @getopt_constant]);
+        exit 0;
+    };
+    
 
     #  And set any constants based on options supplied
     #
@@ -106,7 +114,16 @@ sub getopt {
     unless (@{$opt{'infile'}}) {
         $opt{'infile'}=@{$argv_ar} ? $argv_ar : [\*STDIN];
     }
-
+    
+    
+    #  Set handler
+    #
+    $opt{'handler'} ||= (
+        ($opt{'markdown'} && 'markdown') ||
+        ($opt{'pod'} && 'pod') ||
+        $HANDLER_DEFAULT
+    );
+    
 
     #  Done
     #
@@ -120,7 +137,6 @@ sub main {
     #  Passed a list of options and convert file/input stream
     #
     my $opt_hr=shift();
-    $opt_hr->{'handler'} ||= $HANDLER_DEFAULT;
     foreach my $fn (@{$opt_hr->{'infile'}}) {
         my $output;
         if (ref($fn) eq 'GLOB') {

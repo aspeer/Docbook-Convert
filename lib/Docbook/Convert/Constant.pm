@@ -178,7 +178,9 @@ my $constant_local_fn="${module_fn}.local";
     NO_IMAGE_FETCH      => 0,
     NO_WARN_UNHANDLED   => 0,
     XMLSUFFIX           => '.xml',
+    VERBOSE             => 0,
     
+
     #  Constants that can be set via getopt
     #
     GETOPT_CONSTANT_HR          => {
@@ -189,7 +191,8 @@ my $constant_local_fn="${module_fn}.local";
         no_html                         => undef,
         no_image_fetch                  => undef,
         no_warn_unhandled               => undef,
-        xmlsuffix                       => '|x=s'
+        xmlsuffix                       => '|x=s',
+        verbose                         => '|v',
     },
     
     
@@ -200,12 +203,11 @@ my $constant_local_fn="${module_fn}.local";
         'man',
         'version|V',
         'dump',
+        'dumpopt',
         'outfile|out|o=s',
         'infile|in|f=s@',
         'recurse|r',
         'recursedir|d=s',
-        #'xmlsuffix|x=s',
-        'podsuffix|p=s',
         'markdown|md',
         'pod|pod',
         'merge',
