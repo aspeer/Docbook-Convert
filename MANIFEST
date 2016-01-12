@@ -13,5 +13,7 @@ lib/Docbook/Convert.pm
 LICENSE
 README
 README.md
-bin/docbook2md.pl
+bin/docbook-convert
+bin/docbook2md
+bin/docbook2pod
 MANIFEST.SKIP

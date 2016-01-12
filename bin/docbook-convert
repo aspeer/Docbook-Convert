@@ -10,11 +10,13 @@ use vars qw($VERSION);
 #
 use IO::File;
 use Getopt::Long;
+Getopt::Long::Configure('no_ignore_case');
 use Pod::Usage;
 use FindBin qw($RealBin $Script);
 use File::Find;
 use Cwd qw(cwd);
 use Docbook::Convert;
+use Docbook::Convert::Constant;
 
 
 #  Used for debugging only
@@ -47,29 +49,20 @@ sub getopt {
     #  Get options
     #
     my %opt;
+    
+    
+    #  Converts some constant settings into settable options
+    #
+    my @getopt_constant=map { $GETOPT_CONSTANT_HR->{$_} ? $_.$GETOPT_CONSTANT_HR->{$_} : $_ } 
+        keys %{$GETOPT_CONSTANT_HR};
 
 
     #  Get command line options
     #
     GetOptions(
         \%opt,
-        'help|?',
-        'man',
-        'version',
-        'debug',
-        'verbose',
-        'dump',
-        'dumprender',
-        'warn_unknown_tag',
-        'outfile|o=s',
-        'infile=s@',
-        'recurse|r',
-        'recursedir|d=s',
-        'xmlsuffix|x=s',
-        'podsuffix|p=s',
-        'markdown|md',
-        'merge',
-        'handler|h=s',
+        @{$GETOPT_AR},
+        @getopt_constant,
     ) || pod2usage(2);
     pod2usage(-verbose => 99, -sections => 'Synopsis|Options', -exitval => 1) if $opt{'help'};
     pod2usage(-verbose => 2) if $opt{'man'};
@@ -77,12 +70,21 @@ sub getopt {
         print "$Script version: $VERSION\n";
         exit 0
     };
+    
+
+    #  And set any constants based on options supplied
+    #
+    foreach my $opt (keys %{$GETOPT_CONSTANT_HR}) {
+        if (defined($opt{$opt})) {
+            ${uc($opt)}=$opt{$opt};
+        }
+    }
 
 
     #  Get infile
     #
     unless (@{$opt{'infile'}}) {
-        $opt{'infile'}=$argv_ar
+        $opt{'infile'}=@{$argv_ar} ? $argv_ar : [\*STDIN];
     }
 
 
@@ -98,9 +100,22 @@ sub main {
     #  Passed a list of options:
     #
     my $opt_hr=shift();
-    $opt_hr->{'handler'} ||= 'markdown';
+    $opt_hr->{'handler'} ||= $HANDLER_DEFAULT;
     foreach my $fn (@{$opt_hr->{'infile'}}) {
-        print Docbook::Convert->process($fn, $opt_hr);
+        my $output;
+        if (ref($fn) eq 'GLOB') {
+            $output=Docbook::Convert->process($fn, $opt_hr);
+        }
+        else {
+            $output=Docbook::Convert->process_file($fn, $opt_hr);
+        }
+        if ($opt_hr->{'podmerge'}) {
+            ($out_fn=$in_fn)=~s/\Q$XMLSUFFIX\E$//;
+            unless (-f $out_fn) {
+                return err ("can't merge into file '$out_fn', file does not exist");
+            }
+            Docbook::Convert::Pod::Util->_pod_replace($out_fn, \$output);
+        }
     }
     return \undef;
     

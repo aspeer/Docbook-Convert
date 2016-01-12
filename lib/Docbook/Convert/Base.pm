@@ -91,8 +91,10 @@ sub find_node_tag_text {
     my @text;
     foreach my $tag (@{$tag_ar}) {
         my @tag;
+        #print "find tag $tag\n";
         $self->find_node_tag_text_recurse($data_ar, $tag, \@tag) ||
             return err ();
+        if (@tag) {
         if (ref($join) eq 'SCALAR') {
             push @text, join(${$join}, @tag);
         }
@@ -103,12 +105,14 @@ sub find_node_tag_text {
             push @text, join($join, @tag);
         }
         else {
-            push @text, \@tag;
+            push @text, \@tag
+        }
         }
     }
     #elsif (wantarray() && (@{$tag_ar} > 1)) {
     #    return @text;
     #}
+    #print Dumper(\@text);
     if (wantarray()) {
         return @text;
     }

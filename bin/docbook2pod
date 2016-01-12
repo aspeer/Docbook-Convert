@@ -1,0 +1,6 @@
+#!/usr/bin/perl
+use strict;
+use FindBin qw($Bin);
+my ($handler)=($0=~/docbook2(\w+)$/);
+exec "$Bin/docbook-convert", "--handler=$handler", @ARGV
+

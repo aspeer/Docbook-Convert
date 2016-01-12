@@ -71,8 +71,9 @@ my $constant_local_fn="${module_fn}.local";
     #
     HANDLER_HR => {
 
-        markdown => 'Docbook::Convert::Markdown',
-        pod      => 'Docbook::Convert::POD'
+        markdown        => 'Docbook::Convert::Markdown',
+        md              => 'Docbook::Convert::Markdown',
+        pod             => 'Docbook::Convert::POD'
 
     },
 
@@ -104,9 +105,30 @@ my $constant_local_fn="${module_fn}.local";
     )],
     
     
+    #  Adminition Text
+    #
+    ADMONITION_TEXT_HR  => {
+        note            => 'NOTE',
+        warning         => 'WARNING',
+        caution         => 'CAUTION',
+        tip             => 'TIP',
+        important       => 'IMPORTANT'
+    },
+    
+    
+    #  Refentry Text
+    #
+    REFENTRY_TEXT_HR    => {
+        synoposis       => 'SYNOPSIS',
+        name            => 'NAME'
+    },
+    
+    
     #  Tag synonyms for Markdown
     #
-    MD_TAG_SYNONYM_HR => {},
+    MD_TAG_SYNONYM_HR => {
+        _text   => [qw(replaceable)]
+    },
     
     
     #  Tag synonym for POD
@@ -121,18 +143,75 @@ my $constant_local_fn="${module_fn}.local";
     #
     ALL_TAG_SYNONYM_HR   => {
         command    => [qw(classname parameter filename markup)],
+        sect1      => [qw(section)],
         refsection => [qw(refsect1)],
         para       => [qw(simpara)],
         warning    => [qw(caution important note tip)],
-        _text      => [qw(refentry article literallayout)],
-        _null      => [qw(imageobject)]
+        #figure     => [qw(screenshot)],
+        article    => [qw(refentry)],
+        _text      => [qw(literallayout orgname firstname surname)],
+        _data      => [qw(imageobject)],
+        _null      => [qw(refentryinfo articleinfo)],
+        _meta      => [qw(author affiliation pubdate address copyright)]
     },
-
-
-    #  Default formatting options
+    
+    
+    #  Delay render of mediaobject tag if any of these in parent - potentially
+    #  allows more info to be build into image
     #
-    NO_HTML        => 0,
-    NO_IMAGE_FETCH => 0,
+    MEDIAOBJECT_DELAY_RENDER_AR => [
+        qw(figure)
+    ],
+    
+    
+    #  Metadata render options
+    #
+    META_DISPLAY_TOP            => 0,
+    META_DISPLAY_BOTTOM         => 0,
+    META_DISPLAY_TITLE          => undef,
+    META_DISPLAY_TITLE_H_STYLE  => 'h2',
+    
+    
+    #  Default formatting/output options
+    #
+    NO_HTML             => 0,
+    NO_IMAGE_FETCH      => 0,
+    NO_WARN_UNHANDLED   => 0,
+    XMLSUFFIX           => '.xml',
+    
+    #  Constants that can be set via getopt
+    #
+    GETOPT_CONSTANT_HR          => {
+        meta_display_top                => undef,
+        meta_display_bottom             => undef,
+        meta_display_title              => '=s',
+        meta_disaply_title_h_style      => '=s',
+        no_html                         => undef,
+        no_image_fetch                  => undef,
+        no_warn_unhandled               => undef,
+        xmlsuffix                       => '|x=s'
+    },
+    
+    
+    #  Other options
+    #
+    GETOPT_AR                   => [(
+        'help|?',
+        'man',
+        'version|V',
+        'dump',
+        'outfile|out|o=s',
+        'infile|in|f=s@',
+        'recurse|r',
+        'recursedir|d=s',
+        #'xmlsuffix|x=s',
+        'podsuffix|p=s',
+        'markdown|md',
+        'pod|pod',
+        'merge',
+        'no_warn_unhandled|silent|quiet|s|q',
+        'handler|h=s'
+    )],
 
 
     #  Local constants override anything above
@@ -148,7 +227,7 @@ my $constant_local_fn="${module_fn}.local";
 #
 require Exporter;
 @ISA=qw(Exporter);
-foreach (keys %Constant) {${$_}=$ENV{$_} ? $Constant{$_}=eval($ENV{$_}) : $Constant{$_}}    ## no critic
+foreach (keys %Constant) {${$_}=defined $ENV{$_} ? $Constant{$_}=eval($ENV{$_}) || $ENV{$_} : $Constant{$_}}    ## no critic
 @EXPORT=map {'$' . $_} keys %Constant;
 @EXPORT_OK=@EXPORT;
 %EXPORT_TAGS=(all => [@EXPORT_OK]);

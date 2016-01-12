@@ -33,6 +33,7 @@ use Docbook::Convert::Util;
 
 #  External modules
 #
+use IO::File;
 use XML::Twig;
 use Data::Dumper;
 
@@ -139,12 +140,24 @@ sub parse {
 }
 
 
+sub process_file {
+
+    #  Open file we want to process
+    #
+    my ($self, $fn, $param_hr)=@_;
+    my $fh=IO::File->new($fn, O_RDONLY) ||
+        return err("unable to open file $fn, $!");
+    return $self->process($fh, $param_hr);
+    
+}
+
+
 sub process {
 
 
     #  Get self ref, file to process
     #
-    my ($self, $fn, $param_hr)=@_;
+    my ($self, $xml, $param_hr)=@_;
 
 
     #  Create a hashed self ref to hold various info
@@ -186,44 +199,19 @@ sub process {
 
     #  Parse file which will fill $data_ar;
     #
-    $xml_or->parsefile($fn);
+    $xml_or->parse($xml);
 
 
     #  If we are dumping clean up a bit then spit out
     #
     if ($param_hr->{'dump'}) {
-        my $cr=sub {
-            my ($cr, $data_ar)=@_;
-            if ($data_ar->[$NODE_IX] eq 'text') {
-                foreach my $ix (0..@{$data_ar->[$PRNT_IX][$CHLD_IX]}) {
-                    if ($data_ar->[$PRNT_IX][$CHLD_IX][$ix] eq $data_ar) {
-                        $data_ar->[$PRNT_IX][$CHLD_IX][$ix]=$data_ar->[$CHLD_IX][0];
-                    }
-                }
-            }
-            foreach my $ar (@{$data_ar->[$CHLD_IX]}) {
-                if (ref($ar)) {
-                    $cr->($cr, $ar);
-                }
-                $data_ar->[$PRNT_IX]=$data_ar->[$PRNT_IX][$NODE_IX];
-            }
-
-        };
-        $cr->($cr, $data_ar);
-        return Dumper($data_ar);
+        return Dumper(dump_ar($data_ar));
     }
 
 
     #  And render
     #
     my $output=$self->render($data_ar, $handler_module);
-
-
-    #  Output remaining tree if wanted
-    #
-    if ($param_hr->{'dumprender'}) {
-        return Dumper($data_ar)
-    }
 
 
     #  Done
@@ -260,14 +248,14 @@ sub render {
 
     #  Any errors/warnings for unhandled tags ?
     #
-    if (my $hr=$render_or->{'_autoload'}) {
+    if ((my $hr=$render_or->{'_autoload'}) && !$NO_WARN_UNHANDLED) {
         my @data_ar=sort {($a->[$NODE_IX] cmp $b->[$NODE_IX]) or ($a->[$LINE_IX] <=> $b->[$LINE_IX])} grep {$_} values(%{$hr});
         foreach my $data_ar (@data_ar) {
             my ($tag, $line_no, $col_no)=@{$data_ar}[$NODE_IX, $LINE_IX, $COLM_IX];
             warn("warning - unrendered tag $tag at line $line_no, column $col_no\n");
         }
     }
-    if (my $hr=$render_or->{'_autotext'}) {
+    if ((my $hr=$render_or->{'_autotext'}) && !$NO_WARN_UNHANDLED) {
         my @data_ar=sort {($a->[$NODE_IX] cmp $b->[$NODE_IX]) or ($a->[$LINE_IX] <=> $b->[$LINE_IX])} grep {$_} values(%{$hr});
         foreach my $data_ar (@data_ar) {
             my ($tag, $line_no, $col_no)=@{$data_ar}[$NODE_IX, $LINE_IX, $COLM_IX];

@@ -57,6 +57,14 @@ sub text {
     return $text;
 }
 
+sub replaceable {
+    my ($self, $data_ar)=@_;
+    my $text=$self->find_node_text($data_ar, $NULL);
+    return $self->_italic($text);
+}
+    
+
+
 1;
 
 __END__

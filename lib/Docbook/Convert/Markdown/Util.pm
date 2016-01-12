@@ -55,6 +55,7 @@ sub _strikethrough {
 sub _code {
     my ($self, $text)=@_;
     $text=~s/\`//g;
+    $text=~s/\s+\Q<**SBR**>\E\s+/`  $CR`/g;
     return "`$text`";
 }
 
@@ -182,6 +183,14 @@ sub _anchor_fix {
     my ($self, $output)=@_;
     return $output;
 
+}
+
+sub _prefix {
+    return undef;
+}
+
+sub _suffix {
+    return undef;
 }
 
 1;

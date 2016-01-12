@@ -55,8 +55,10 @@ sub _strikethrough {
 
 sub _code {
     my ($self, $text)=@_;
-    $text=~s/C<<<\s+(.*?)\s+>>>/$1/g;
-    return "C<<< $text >>>";
+    $text=~s/C<<<<\s+//g;
+    $text=~s/\s+>>>>//g;
+    $text=~s/\s+\Q<**SBR**>\E\s+/ >>>>${CR2}C<<<< /g;
+    return "C<<<< $text >>>>";
 }
 
 
@@ -171,6 +173,61 @@ sub _anchor_fix {
         $output=~s/L\<(.*?)\|#\Q$id\E/L\<$1|\"$title\"/g;
     }
     return $output;
+
+}
+
+sub _prefix {
+    return '=pod';
+}
+
+sub _suffix {
+    return '=cut';
+}
+
+
+sub _pod_replace {
+
+
+    #  Find and replace POD in a file
+    #
+    my ($self, $fn, $pod_sr)=@_;
+
+
+    #  Try to load PPI
+    #
+    eval {
+        require PPI;
+        1;
+    } || return err ("unable to load PPI module, $@");
+
+
+    #  Create new PPI documents from supplied file and new POD
+    #
+    my $ppi_doc_or=PPI::Document->new($fn);
+    my $ppi_pod_or=PPI::Document->new($pod_sr);
+
+
+    #  Prune existing POD
+    #
+    $ppi_doc_or->prune('PPI::Token::Pod');
+    if (my $ppi_doc_end_or=$ppi_doc_or->find_first('PPI::Statement::End')) {
+        $ppi_doc_end_or->prune('PPI::Token::Comment');
+        $ppi_doc_end_or->prune('PPI::Token::Whitespace');
+    }
+    else {
+        $ppi_doc_or->add_element(PPI::Token::Separator->new("__END__\n\n"));
+        $ppi_doc_or->add_element(PPI::Token::Whitespace->new("\n"));
+    }
+
+
+    #  Append new POD
+    #
+    $ppi_doc_or->add_element($ppi_pod_or);
+
+
+    #  Save
+    #
+    return $ppi_doc_or->save($fn);
 
 }
 
