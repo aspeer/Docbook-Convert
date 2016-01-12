@@ -14,8 +14,10 @@ Getopt::Long::Configure('no_ignore_case');
 use Pod::Usage;
 use FindBin qw($RealBin $Script);
 use File::Find;
-use Cwd qw(cwd);
+use Cwd qw(cwd abs_path);
 use Docbook::Convert;
+use Docbook::Convert::Util;
+use Docbook::Convert::POD::Util;
 use Docbook::Convert::Constant;
 
 
@@ -81,6 +83,24 @@ sub getopt {
     }
 
 
+    # Recursing ?
+    #
+    if (exists $opt{'recurse'} || $opt{'recursedir'}) {
+        my $dn=$opt{'recursedir'} || cwd();
+        $dn=Cwd::abs_path($dn);
+        my @fn;
+        my $wanted_cr=sub {
+            return unless -f (my $fn=$File::Find::name);
+            return if $fn=~/\/\._/;    #  Mac temp file
+            push @fn, $fn if ($fn=~/\Q$XMLSUFFIX\E$/);
+        };
+        find($wanted_cr, $dn);
+        @fn ||
+            return err ("no files with '%s' suffix found when recursing directory '$dn'", $XMLSUFFIX);
+        $opt{'infile'}=\@fn;
+    }
+
+
     #  Get infile
     #
     unless (@{$opt{'infile'}}) {
@@ -97,7 +117,7 @@ sub getopt {
 
 sub main {
 
-    #  Passed a list of options:
+    #  Passed a list of options and convert file/input stream
     #
     my $opt_hr=shift();
     $opt_hr->{'handler'} ||= $HANDLER_DEFAULT;
@@ -109,12 +129,28 @@ sub main {
         else {
             $output=Docbook::Convert->process_file($fn, $opt_hr);
         }
-        if ($opt_hr->{'podmerge'}) {
-            ($out_fn=$in_fn)=~s/\Q$XMLSUFFIX\E$//;
+        if ($opt_hr->{'merge'}) {
+            (my $out_fn=$fn)=~s/\Q$XMLSUFFIX\E$//;
             unless (-f $out_fn) {
                 return err ("can't merge into file '$out_fn', file does not exist");
             }
-            Docbook::Convert::Pod::Util->_pod_replace($out_fn, \$output);
+            Docbook::Convert::POD::Util->_pod_replace($out_fn, \$output);
+        }
+        elsif (my $out_fn=$opt_hr->{'outfile'}) {
+            if ($out_fn=~/^\.(.*)$/) {
+                #  Output file option is something like '.foo'. Means add '.foo' to input file name
+                #  and make that the output file name
+                #
+                my $ext=$1;
+                ($out_fn=$fn)=~s/\Q$XMLSUFFIX\E$//;
+                $out_fn.=".${ext}";
+            }
+            my $out_fh=IO::File->new($out_fn, O_WRONLY|O_CREAT|O_TRUNC) ||
+                return err("unable to write to output file $out_fn, $!");
+            print $out_fh $output;
+        }
+        else {
+            print $output;
         }
     }
     return \undef;

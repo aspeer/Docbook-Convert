@@ -213,6 +213,7 @@ sub _pod_replace {
     if (my $ppi_doc_end_or=$ppi_doc_or->find_first('PPI::Statement::End')) {
         $ppi_doc_end_or->prune('PPI::Token::Comment');
         $ppi_doc_end_or->prune('PPI::Token::Whitespace');
+        $ppi_doc_or->add_element(PPI::Token::Whitespace->new("\n"));
     }
     else {
         $ppi_doc_or->add_element(PPI::Token::Separator->new("__END__\n\n"));
