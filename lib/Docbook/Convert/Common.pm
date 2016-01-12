@@ -257,7 +257,7 @@ sub variablelist {
     my @list;
     foreach my $ar (@{$self->find_node($data_ar, 'varlistentry')}) {
         my $text=$self->find_node_text($ar, $self->_variablelist_join());
-        push @list, "* $text";
+        push @list, $self->_list_item("* $text");
     }
     #return join($CR2, grep {$_} $self->_list_begin(), @list, $self->_list_end);
     return join($CR2, $self->_list_begin(), @list, $self->_list_end);
@@ -371,7 +371,7 @@ sub refnamediv {
     my ($refname, $refpurpose)=
         $self->find_node_tag_text($data_ar, 'refname|refpurpose', $NULL);
     my $heading=$REFENTRY_TEXT_HR->{'name'};
-    my $text=$self->_h2($heading) . $CR2 . join(' - ', grep {$_} $refname, $refpurpose);
+    my $text=$self->_h1($heading) . $CR2 . join(' - ', grep {$_} $refname, $refpurpose);
     return $text;
 }
 
@@ -381,7 +381,7 @@ sub refsection {
     my ($title, $subtitle)=
         $self->find_node_tag_text($data_ar, 'title|subtitle', $NULL);
     my $text=$self->find_node_text($data_ar, $CR2);
-    return join($CR2, $self->_h2($title), $text);
+    return join($CR2, $self->_h1($title), $text);
 }
 
 
@@ -471,8 +471,8 @@ sub refsynopsisdiv {
     my ($self, $data_ar)=@_;
     #my $text=$self->find_node_text($data_ar, $NULL);
     my $text=$self->find_node_text($data_ar, $CR2);
-    my $heading=$REFENTRY_TEXT_HR->{'synopisis'};
-    $text=$self->_h2($heading) . $CR2 . $text;
+    my $heading=$REFENTRY_TEXT_HR->{'synopsis'};
+    $text=$self->_h1($heading) . $CR2 . $text;
     return $text;
 }
 
@@ -488,7 +488,8 @@ sub screen {
 sub term {
     my ($self, $data_ar)=@_;
     my $text=$self->find_node_text($data_ar, $NULL);
-    return $self->_bold($self->_code($text));
+    #return $self->_bold($self->_code($text));
+    return $self->_bold($text);
 }
 
 

@@ -66,7 +66,7 @@ sub getopt {
         @{$GETOPT_AR},
         @getopt_constant,
     ) || pod2usage(2);
-    pod2usage(-verbose => 99, -sections => 'Synopsis|Options', -exitval => 1) if $opt{'help'};
+    pod2usage(-verbose => 99, -sections => 'SYNOPSIS|Options', -exitval => 1) if $opt{'help'};
     pod2usage(-verbose => 2) if $opt{'man'};
     $opt{'version'} && do {
         print "$Script version: $VERSION\n";
@@ -173,3 +173,127 @@ sub main {
     
 }
 
+__END__
+
+
+=pod
+
+=head1 docbook-convert 5
+
+=head1 NAME
+
+docbook-convert - Convert Docbook articles and refentry's to other formats such as Markup and POD
+
+=head1 SYNOPSIS
+
+C<<<< docbook-convert --markdown file.xml >>>>
+
+=head1 Description
+
+docbook-convert is a front-end to the Docbook::Convert Perl module for converting between Docbook and other foirmats - currently Markdown and POD. It is intended to let authors write documentation in Docbook and then output it to more easily publishable formats such as Markdown - or have it converted to POD and optionally merged into a perl programs or module.
+
+This utility will work on Docbook 4+ Articles and Refentry templates. See Limitations in this document for information on capabilities of this program.
+
+=head1 Options
+
+=over
+
+=item * B<<< --dump >>>
+
+Dump internal parse tree of Docbook file. Useful for debugging.
+
+=item * B<<< --handler -h >>>
+
+Which output handler to use. Currently one of --handler=markdown or --handler-pod
+
+=item * B<<< --help >>>
+
+Short help file
+
+=item * B<<< -f --in -infile  >>>
+
+Name of input file. If not supplied in options input file with be first command line argument - or if not supplied STDIN
+
+=item * B<<< --man >>>
+
+Show this manpage
+
+=item * B<<< --markdown --md >>>
+
+Output as Markdown. Shorthand for --handler=markdown
+
+=item * B<<< --merge >>>
+
+Merge output (POD only) into an existing Perl program/module. The name of the Docbook file must be the name of the Perl to be merged into with an ".xml" suffix appended. E.g. docbook-convert --pod --merge myfile.pl.xml will convert the file to POD and append it to file myfile.pl
+
+=item * B<<< --meta_display_title_h_style >>>
+
+If rendering a metadata title which heading style should be applied. One of h1..h4 
+
+=item * B<<< --meta_display_bottom >>>
+
+Render any metadata at the bottom of the document
+
+=item * B<<< --meta_display_title >>>
+
+Optional title to be rendered as a prefix to any metadata displayed
+
+=item * B<<< --meta_display_top >>>
+
+Render any metadata at the top of the document
+
+=item * B<<< --no_html >>>
+
+Do not incorporate any HTML in the output (e.g. images in POD). This may limit what can be converted.
+
+=item * B<<< --no_image_fetch >>>
+
+If an image incorporated into a Docbook file has attributes which indicate scaling should be applied the image will be fetched by the converter and the appropriate width calculated. This option will prevent fetching of remote images, and thus will nullify any scaling attributes associated with images.
+
+=item * B<<< --silent >>>
+
+Do not warn on any unhandled tags or other issues
+
+=item * B<<< -o --out -outfile >>>
+
+Name of file any output should be sent to. If specified as suffix only (e.g. --outfile=.foo) then the .xml extension will be stripped from the input file name and the nominated suffix applied. The result will be used as the output file name. Userful with --recurse
+
+=item * B<<< --recursedir|d >>>
+
+Convert all .xml files in a nominated directory
+
+=item * B<<< --recurse >>>
+
+Convert all files in the current working directory and any sub-directories 
+
+=item * B<<< -V -version >>>
+
+Display the version number of the utility
+
+=back
+
+=head1 Examples
+
+    # Convert a single file to markdown
+    
+    docbook-convert --markdown -f mydoc.xml -o mydoc.md
+    
+    # Convert all files in a directory to markdown
+    
+    docbook-convert --markdown --recursedir ~/mydoc/ -o .md
+    
+    # Include meta-data in output
+    
+    docbook-convert --markdown --meta_display_top myarticle.xml -o myarticle.md
+    
+    # Merge documentation as POD into an existing Perl program myprog.pl
+    
+    docbook-convert --pod --merge myprog.pl.xml
+
+=head1 Limitations
+
+This utility and associated Perl module will only convert a subset of Docbook entities and tags.
+
+=head1 Copyright and License
+
+=cut

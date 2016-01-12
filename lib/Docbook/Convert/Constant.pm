@@ -119,7 +119,7 @@ my $constant_local_fn="${module_fn}.local";
     #  Refentry Text
     #
     REFENTRY_TEXT_HR    => {
-        synoposis       => 'SYNOPSIS',
+        synopsis        => 'SYNOPSIS',
         name            => 'NAME'
     },
     
@@ -187,7 +187,7 @@ my $constant_local_fn="${module_fn}.local";
         meta_display_top                => undef,
         meta_display_bottom             => undef,
         meta_display_title              => '=s',
-        meta_disaply_title_h_style      => '=s',
+        meta_display_title_h_style      => '=s',
         no_html                         => undef,
         no_image_fetch                  => undef,
         no_warn_unhandled               => undef,

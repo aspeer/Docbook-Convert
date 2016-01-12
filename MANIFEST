@@ -14,6 +14,7 @@ LICENSE
 README
 README.md
 bin/docbook-convert
+bin/docbook-convert.xml
 bin/docbook2md
 bin/docbook2pod
 MANIFEST.SKIP
