@@ -43,8 +43,20 @@ sub new {    ## no subsort
 
     #  New instance
     #
-    my ($class, @param)=@_;
-    return bless((my $self={@param}), ref($class) || $class);
+    #my ($class, @param)=@_;
+    #return bless((my $self={@param}), ref($class) || $class);
+    my ($class, $param_hr)=@_;
+    my %self=(
+        meta_display_top                => $META_DISPLAY_TOP,
+        meta_display_bottom             => $META_DISPLAY_BOTTOM,
+        meta_display_title              => $META_DISPLAY_TITLE,
+        meta_display_title_h_style      => $META_DISPLAY_TITLE_H_STYLE,
+        no_html                         => $NO_HTML,
+        no_image_fetch                  => $NO_IMAGE_FETCH,
+        no_warn_unhandled               => $NO_WARN_UNHANDLED,
+        %{$param_hr}
+    );
+    return bless(\%self, ref($class) || $class);
 
 }
 

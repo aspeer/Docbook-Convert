@@ -19,7 +19,7 @@ package Docbook::Convert;
 #  Pragma
 #
 use strict qw(vars);
-use vars qw($VERSION);
+use vars qw($VERSION $AUTOLOAD);
 use warnings;
 no warnings qw(uninitialized);
 sub BEGIN {local $^W=0}
@@ -231,7 +231,7 @@ sub render {
 
     #  Get hander
     #
-    my $render_or=$handler->new() ||
+    my $render_or=$handler->new($self) ||
         return err ("unable to initialise handler $handler");
 
 
@@ -311,6 +311,21 @@ sub start_tag_handler {
     $elt_or->set_att('_line_no', $twig_or->current_line());
     $elt_or->set_att('_col_no',  $twig_or->current_column());
 
+}
+
+
+sub AUTOLOAD {
+
+    #  Catchall for handler shortcuts, e.g. Docbook::Convert->markdown();
+    #
+    my ($self, $xml, $param_hr)=@_;
+    my ($handler)=($AUTOLOAD=~/::(\w+)$/);
+    if ($handler=~s/_file$//) {
+        return $self->process_file($xml, {%{$param_hr}, handler=>$handler});
+    }
+    else {
+        return $self->process($xml, {%{$param_hr}, handler=>$handler});
+    }
 }
 
 1;

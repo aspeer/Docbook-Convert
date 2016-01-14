@@ -183,22 +183,48 @@ sub _text_cleanup {
 sub article {
 
     my ($self, $data_ar)=@_;
+    
+    #  Rendering an article. Get article body
+    #
     my @text=@{$self->find_node_text($data_ar)};
 
+    
+    #  Title
+    #
     my $meta_title=$self->find_node_tag_text($data_ar, 'title', $NULL);
     $self->{'_meta'}{'title'}=$meta_title;
     
+    
+    #  Any prefix/suffix to be appended (e.g. =pod, =cut for POD);
     my ($prefix, $suffix)=map { $self->$_() } qw(_prefix _suffix);
+    
+    
+    #  Shortcut any relevent params we will need
+    #
+    my ($meta_display_top, $meta_display_bottom, $meta_display_title,
+        $meta_display_title_h_style)=@{$self}{qw(
+            meta_display_top
+            meta_display_bottom
+            meta_display_title
+            meta_display_title_h_style
+        )};
 
-    if ($META_DISPLAY_TOP || $META_DISPLAY_BOTTOM) {
 
-        my $meta_display_title;
-        if ($meta_display_title=$META_DISPLAY_TITLE) {
-            if (my $h_style="_${META_DISPLAY_TITLE_H_STYLE}") {
+    #  Do we want to display meta data - if so format and spit out
+    #
+    if ($meta_display_top || $meta_display_bottom) {
+
+
+        #  Generate title if requested
+        #
+        if ($meta_display_title) {
+            if (my $h_style="_${meta_display_title_h_style}") {
                 $meta_display_title=$self->$h_style($meta_display_title);
             }
         }
 
+        #  Gather key: value meta data tags
+        #
         my @meta;
         foreach my $key ('title', @{$ALL_TAG_SYNONYM_HR->{'_meta'}}) {
             if (my $value=$self->{'_meta'}{$key}) {
@@ -207,12 +233,15 @@ sub article {
             }
         }
         my $meta=join($CR, @meta);
-
-        if ($META_DISPLAY_TOP) {
+        
+        
+        #  Output at top or bottom as required
+        #
+        if ($meta_display_top) {
             return $self->_text_cleanup(
                 join($CR2, grep {$_} $prefix, $meta_display_title, $meta, @text, $suffix));
         }
-        if ($META_DISPLAY_BOTTOM) {
+        if ($meta_display_bottom) {
             return $self->_text_cleanup(
                 join($CR2, grep {$_} $prefix, @text, $meta_display_title, $meta, $suffix));
         }
@@ -504,7 +533,13 @@ sub warning { # synonym for caution, important, note, tip
 
 
 sub _image_build {
+
+    #  Build image output
+    #
     my ($self, $data_ar)=@_;
+    
+    
+    #  Get alt text, title, URL etc/
     my $alt_text1=$self->find_node_tag_text($data_ar, 'alt', $NULL);
     my $title=$self->find_node_tag_text($data_ar, 'title|caption|screeninfo', $NULL);
     my $image_data_ar=$self->find_node($data_ar, 'imagedata');
@@ -512,8 +547,15 @@ sub _image_build {
     my $alt_text2=$image_data_attr_hr->{'annotations'};
     my $alt_text=$alt_text1 || $alt_text2;
     my $url=$image_data_attr_hr->{'fileref'};
-
-    if ((my $scale=$image_data_attr_hr->{'scale'}) && !$NO_HTML && !$NO_IMAGE_FETCH) {
+    
+    #  Generation Options
+    #
+    my ($no_html, $no_image_fetch)=@{$self}{qw(no_html no_image_fetch)};
+    
+    
+    #  Fetch image to calc width etc. if needed
+    #
+    if ((my $scale=$image_data_attr_hr->{'scale'}) && !$no_html && !$no_image_fetch) {
 
         #  Get Image width
         #
@@ -521,6 +563,9 @@ sub _image_build {
         $width *= ($scale/100);
         $image_data_attr_hr->{'width'}=$width;
     }
+    
+    #  Return output
+    #
     return $self->_image($url, $alt_text, $title, $image_data_attr_hr);
 }
 

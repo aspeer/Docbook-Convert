@@ -10,6 +10,7 @@ lib/Docbook/Convert/Constant.pm
 lib/Docbook/Convert/Markdown.pm
 lib/Docbook/Convert/Base.pm
 lib/Docbook/Convert.pm
+lib/Docbook/Convert.pm.xml
 LICENSE
 README
 README.md
