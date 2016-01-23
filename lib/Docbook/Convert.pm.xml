@@ -47,9 +47,9 @@ print Docbook::Convert-&gt;markdown($docbook, { meta_display_top=&gt;1 });</comm
 ><title
 >Description</title
 ><para
->Docbook::Convert Perl will convert between Docbook and other foirmats - currently Markdown and POD. It is intended to let authors write documentation in Docbook, and then output it to more easily publishable formats such as Markdown - or have it converted to POD and optionally merged into a perl programs or module.</para
+>Docbook::Convert Perl will convert between Docbook and other formats - currently Markdown and POD. It is intended to let authors write documentation in Docbook, and then output it to more easily publishable formats such as Markdown - or have it converted to POD and optionally merged into a perl programs or module.</para
 ><para
->It currently supports as subset of Docbook tags and its intent is to convert Docbook 4+ article and refentry templates with common entites into manual pages or other documentation.</para
+>It currently supports as subset of Docbook tags, and its intent is to convert Docbook 4+ article and refentry templates with common entites into manual pages or other documentation.</para
 ></refsection
 ><refsection
 ><title
@@ -62,7 +62,7 @@ print Docbook::Convert-&gt;markdown($docbook, { meta_display_top=&gt;1 });</comm
 >process($xml, \%opt)</term
 ><listitem
 ><para
->Convert an XML string or file handle into a different format. Unless directed via the handler option to default conversion will be to Markdown</para
+>Convert an XML string or file handle into a different format. Unless directed via the handler option the default conversion will be to Markdown</para
 ></listitem
 ></varlistentry
 ><varlistentry
@@ -111,7 +111,7 @@ print Docbook::Convert-&gt;markdown($docbook, { meta_display_top=&gt;1 });</comm
 ><title
 >Options</title
 ><para
->The following options can be supplied to the process methods as a hash reference:</para
+>The following options can be supplied to the process methods as a hash reference as per the synopsis example:</para
 ><variablelist
 ><varlistentry
 ><term
@@ -170,6 +170,81 @@ print Docbook::Convert-&gt;markdown($docbook, { meta_display_top=&gt;1 });</comm
 ></listitem
 ></varlistentry
 ></variablelist
+></refsection
+><refsection
+><title
+>Environment</title
+><para
+>The following environment variables will alter the behaviour or the module as per their Option equivalent:</para
+><itemizedlist
+><listitem
+><para
+>META_DISPLAY_TOP</para
+></listitem
+><listitem
+><para
+>META_DISPLAY_BOTTOM</para
+></listitem
+><listitem
+><para
+>META_DISPLAY_TITLE</para
+></listitem
+><listitem
+><para
+>META_DISPLAY_TITLE_H_STYLE</para
+></listitem
+><listitem
+><para
+>NO_HTML</para
+></listitem
+><listitem
+><para
+>NO_IMAGE_FETCH</para
+></listitem
+><listitem
+><para
+>NO_WARN_UNHANDLED</para
+></listitem
+></itemizedlist
+></refsection
+><refsection
+><title
+>Files</title
+><para
+>The file <filename
+>&lt;sitelibpath&gt;/Docbook/Convert/Constants.pm</filename
+> contains global settings which influence the behaviour of the module. Whilst this file can be edited any changes will be overwritten if the module is updated. If a file named <filename
+>&lt;sitelibpath&gt;/Docbook/Convert/Constants.pm.local</filename
+> exists, then any entries in that file will override the local globals. The file format should be that of an anoymous hash reference, e.g file contents of:</para
+><programlisting
+>{
+    NO_HTML         =&gt; 1,
+    NO_IMAGE_FETCH  =&gt; 1
+}</programlisting
+><para
+>Will change the defaults for the named globals. The syntax needs to be perl correct - check file has no errors when run against <command
+>perl -c -w &lt;dir&gt;/Constants.pm.local</command
+></para
+></refsection
+><refsection
+><title
+>Caveats</title
+><para
+>This module does not puport to handle all Docbook entity tags or templates. It operates on a limited subset of entity tags commonly used for describing manual pages for Perl modules and other Unix utilities.</para
+></refsection
+><refsection
+><title
+>Author</title
+><para
+>Andrew Speer <email
+>aspeer@cpan.org</email
+></para
+></refsection
+><refsection
+><title
+>Copyright and License</title
+><para
+></para
 ></refsection
 ></refentry
 >

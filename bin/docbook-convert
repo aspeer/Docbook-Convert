@@ -82,15 +82,6 @@ sub getopt {
     };
     
 
-    #  And set any constants based on options supplied
-    #
-    foreach my $opt (keys %{$GETOPT_CONSTANT_HR}) {
-        if (defined($opt{$opt})) {
-            ${uc($opt)}=$opt{$opt};
-        }
-    }
-
-
     # Recursing ?
     #
     if (exists $opt{'recurse'} || $opt{'recursedir'}) {

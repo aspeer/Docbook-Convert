@@ -10,12 +10,19 @@ my %WriteMakefile=(
     NAME                => 'Docbook::Convert',
     VERSION_FROM        => 'lib/Docbook/Convert.pm',
     ABSTRACT_FROM       => 'lib/Docbook/Convert.pm',,
-    EXE_FILES           => [],
+    EXE_FILES           => [
+        'bin/docbook-convert',
+        'bin/docbook2md',
+        'bin/docbook2pod'
+    ],
     LICENSE             => 'perl',
     AUTHOR              => 'Andrew Speer <andrew.speer@isolutions.com.au>',
     MIN_PERL_VERSION	=> '5.006',
     PREREQ_PM           =>  {
-        'Test::Simple'  =>  0.44
+        'Test::Simple'  =>  0.44,
+        'XML::Twig'     =>  0,
+        'Pod::Usage'    =>  0,
+        'Getopt::Long'  =>  0,
     },
     META_MERGE => { 
         'meta-spec'     => {

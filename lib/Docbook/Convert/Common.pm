@@ -126,7 +126,7 @@ sub cmdsynopsis {
 
 sub command {
     my ($self, $data_ar)=@_;
-    if ($self->find_parent($data_ar, 'screen')) {
+    if ($self->find_parent($data_ar, 'screen|programlisting')) {
 
         #  render later
         return $data_ar;
