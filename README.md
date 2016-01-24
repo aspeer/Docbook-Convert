@@ -2,14 +2,61 @@ Docbook::Convert README
 
 # 1 Docbook::Convert \- migrate Docbook article or refentry files to Markdown or POD #
 
-This Perl module arose from the mixed results I had in migrating Docbook material to Markdown, and ftom there to POD using pandoc, rman and other existing tools. None of the toolchains produced the output I was after
+This Perl module arose from the mixed results I had in migrating Docbook material to Markdown \- and from there to POD \- using pandoc, rman and other existing tools. None of the toolchains produced the output I was after.
 
-# 2 Why ? #
+# 2 Why use XML for documentation ? #
 
-I prefer to write documentation for man pages in Docbook using the XMLMind XXE editor. Its&#39; GUI interface for Docbook templates and formatting features work for me \- and I prefer editing documents in that environment rathet than native text file formats such as Markdown or POD.
+I prefer to write documentation for man pages in Docbook using the XMLMind XXE editor. It has Docbook templates and formatting features that allow for quick and easy creation of man pacges, articles etc. Additionally the XXE editor shows formatting in realtime allowing for a more complete sense of what the document will look like when finished.
 
-However as rich as the Docbook toolset environment is there are no exitsting XSL stylesheets \- that I could find \- to convert Docbook to Markdown or POD. This module provides a facility to perform those conversions.
+However I could not find toolsets which gave satisfactory results when converting Docbook to Markdown or POD. This module provides a facility to perform those conversions.
 
 # 3 Why not write an XLS stylesheet and use XSLT ? #
 
 After trying to get my head around the syntax of XSL stylesheets \- and failing miserably to produce any decent output using them \- I resorted to the &quot;if all you have is a hammer everything looks like a nail&quot; approach and do it with a Perl module \- which suited my competencies far better than XSL. 
+
+# 4 Installation #
+
+The latest code will always be on GitHub. Install via the following commands:
+
+    git clone Docbook-Convert
+    cd Docbook-Convert
+    
+    # If on a modern system
+    cpan .
+    
+    # Or
+    cpanm .
+    
+    # Failing that
+    perl Makefile.PL
+    make
+    make test
+    make install
+
+# 5 Usage #
+
+For full usage instructions see the man page. A quick example:
+
+    #  Convert to markdown
+    #
+    docbook2md manpage.xml > manpage.md
+    
+    #  Convert to POD
+    #
+    docbook2pod manpage.xml > manpage.pod
+
+# 6 Dependencies #
+
+Docbook::Convert depends heavily on XML::Twig and some other modules. All dependencies are listed in the Makefile.PL and will be installed automaticlly assuming Internet connectivity.
+
+# 7 LICENSE and COPYRIGHT #
+
+This file is part of Docbook::Convert.
+
+This software is copyright \(c) 2016 by Andrew Speer &lt;andrew.speer@isolutions.com.au&gt;.
+
+This is free software; you can redistribute it and/or modify it underthe same terms as the Perl 5 programming language system itself.
+
+Full license text is available at:
+
+&lt;http://dev.perl.org/licenses/&gt;

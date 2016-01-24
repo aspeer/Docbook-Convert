@@ -1,5 +1,16 @@
 #!/bin/perl
 #
+#  This file is part of Docbook::Convert.
+#
+#  This software is copyright (c) 2016 by Andrew Speer <andrew.speer@isolutions.com.au>.
+#
+#  This is free software; you can redistribute it and/or modify it under
+#  the same terms as the Perl 5 programming language system itself.
+#
+#  Full license text is available at:
+#
+#  <http://dev.perl.org/licenses/>
+#
 use strict qw(vars);
 use lib qw(lib);
 use vars qw($VERSION);
@@ -285,6 +296,16 @@ Display the version number of the utility
 
 This utility and associated Perl module will only convert a subset of Docbook entities and tags.
 
-=head1 Copyright and License
+=head1 LICENSE and COPYRIGHT
+
+This file is part of Docbook::Convert.
+
+This software is copyright (c) 2016 by Andrew Speer <andrew.speer@isolutions.com.au>.
+
+This is free software; you can redistribute it and/or modify it underthe same terms as the Perl 5 programming language system itself.
+
+Full license text is available at:
+
+<http://dev.perl.org/licenses/>
 
 =cut

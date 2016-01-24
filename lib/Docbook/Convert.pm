@@ -341,7 +341,7 @@ Docbook::Convert - Convert Docbook articles and refentry's to other formats such
 
 =head1 SYNOPSIS
 
-    C<<<< # Use on file handle
+    # Use on file handle
     #
     use Docbook::Convert;
     open FILE, 'docbook.xml' or die $!;
@@ -358,13 +358,13 @@ Docbook::Convert - Convert Docbook articles and refentry's to other formats such
     
     # Specify output options
     #
-    print Docbook::Convert->markdown($docbook, { meta_display_top=>1 }); >>>>
+    print Docbook::Convert->markdown($docbook, { meta_display_top=>1 });
 
 =head1 Description
 
-Docbook::Convert Perl will convert between Docbook and other foirmats - currently Markdown and POD. It is intended to let authors write documentation in Docbook, and then output it to more easily publishable formats such as Markdown - or have it converted to POD and optionally merged into a perl programs or module.
+Docbook::Convert Perl will convert between Docbook and other formats - currently Markdown and POD. It is intended to let authors write documentation in Docbook, and then output it to more easily publishable formats such as Markdown - or have it converted to POD and optionally merged into a perl programs or module.
 
-It currently supports as subset of Docbook tags and its intent is to convert Docbook 4+ article and refentry templates with common entites into manual pages or other documentation.
+It currently supports as subset of Docbook tags, and its intent is to convert Docbook 4+ article and refentry templates with common entites into manual pages or other documentation.
 
 =head1 Methods
 
@@ -374,7 +374,7 @@ The following public methods are supplied:
 
 =item * B<<< process($xml, \%opt) >>>
 
-Convert an XML string or file handle into a different format. Unless directed via the handler option to default conversion will be to Markdown
+Convert an XML string or file handle into a different format. Unless directed via the handler option the default conversion will be to Markdown
 
 =item * B<<< process_file($filename, \%opt) >>>
 
@@ -400,7 +400,7 @@ A shortcut to the process_file method with the POD handler implied
 
 =head1 Options
 
-The following options can be supplied to the process methods as a hash reference:
+The following options can be supplied to the process methods as a hash reference as per the synopsis example:
 
 =over
 
@@ -433,5 +433,58 @@ For some Docbook image entities attributes that control the scaling of images ma
 By default Docbook entites that are not handled in the conversion process (because the code does not yet cater for them) generate a warning. Setting this option to 1 will suppress any warnings.
 
 =back
+
+=head1 Environment
+
+The following environment variables will alter the behaviour or the module as per their Option equivalent:
+
+=over
+
+=item * META_DISPLAY_TOP
+
+=item * META_DISPLAY_BOTTOM
+
+=item * META_DISPLAY_TITLE
+
+=item * META_DISPLAY_TITLE_H_STYLE
+
+=item * NO_HTML
+
+=item * NO_IMAGE_FETCH
+
+=item * NO_WARN_UNHANDLED
+
+=back
+
+=head1 Files
+
+The file C<<<< <sitelibpath>/Docbook/Convert/Constants.pm >>>> contains global settings which influence the behaviour of the module. Whilst this file can be edited any changes will be overwritten if the module is updated. If a file named C<<<< <sitelibpath>/Docbook/Convert/Constants.pm.local >>>> exists, then any entries in that file will override the local globals. The file format should be that of an anoymous hash reference, e.g file contents of:
+
+    {
+        NO_HTML         => 1,
+        NO_IMAGE_FETCH  => 1
+    }
+
+Will change the defaults for the named globals. The syntax needs to be perl correct - check file has no errors when run against C<<<< perl -c -w <dir>/Constants.pm.local >>>>
+
+=head1 Caveats
+
+This module does not puport to handle all Docbook entity tags or templates. It operates on a limited subset of entity tags commonly used for describing manual pages for Perl modules and other Unix utilities.
+
+=head1 Author
+
+Andrew Speer <aspeer@cpan.org>
+
+=head1 LICENSE and COPYRIGHT
+
+This file is part of Docbook::Convert.
+
+This software is copyright (c) 2016 by Andrew Speer <andrew.speer@isolutions.com.au>.
+
+This is free software; you can redistribute it and/or modify it underthe same terms as the Perl 5 programming language system itself.
+
+Full license text is available at:
+
+<http://dev.perl.org/licenses/>
 
 =cut
