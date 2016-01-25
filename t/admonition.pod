@@ -1,0 +1,15 @@
+=pod
+
+=head1 1 Admonition
+
+B<<< NOTE >>>: This is a Note
+
+B<<< TIP >>>: This is a Tip
+
+B<<< WARNING >>>: This is a Warning
+
+B<<< CAUTION >>>: This is a Caution
+
+B<<< IMPORTANT >>>: This is Important
+
+=cut

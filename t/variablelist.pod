@@ -1,0 +1,51 @@
+=pod
+
+=head1 1 Variable List
+
+Variable list inside para:
+
+=over
+
+=item * B<<< Variable List Item 1 >>>
+
+List Item 1 Line 1
+
+=item * B<<< Variable List Item 2 >>>
+
+List Item 2 Line 1
+
+List Item 2 Line 2
+
+List Item 3 Line 3
+
+=item * B<<< Variable List Item 3 >>>
+
+List Item 3 Line 1
+
+=back
+
+End para.
+
+Variable list outside para:
+
+=over
+
+=item * B<<< Variable List Item 1 >>>
+
+List Item 1 Line 1
+
+=item * B<<< Variable List Item 2 >>>
+
+List Item 2 Line 1
+
+List Item 2 Line 2
+
+List Item 3 Line 3
+
+=item * B<<< Variable List Item 3 >>>
+
+List Item 3 Line 1
+
+=back
+
+=cut

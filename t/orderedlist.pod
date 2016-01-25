@@ -1,0 +1,39 @@
+=pod
+
+=head1 1 Ordered List
+
+Ordered list inside para:
+
+=over
+
+=item 1. Ordered list item 1
+
+=item 2. Ordered list item 2
+
+item 2 line 2
+
+item 2 line 3
+
+=item 3. Ordered list item 3
+
+=back
+
+End para.
+
+Ordered list outside para:
+
+=over
+
+=item 1. Ordered list item 1
+
+=item 2. Ordered list item 2
+
+item 2 line 2
+
+item 2 line 3
+
+=item 3. Ordered list item 3
+
+=back
+
+=cut

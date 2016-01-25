@@ -1,0 +1,29 @@
+=pod
+
+=head1 1 Block Quote
+
+Non-quote Para 1
+
+Block Quote Para 2
+
+Block Quote Para 3
+
+Non-quote Para 4
+
+Block Quote with List
+
+=over
+
+=item * List Item 1
+
+List Item 1 Additional Para
+
+=item * List Item 2
+
+=back
+
+End block quote
+
+Non-quote Para 5
+
+=cut

@@ -1,0 +1,21 @@
+=pod
+
+=head1 1 
+
+Plain Text
+
+B<<< Bold Text >>>
+
+I<<< Italics Text >>>
+
+Strikethrough Text
+
+C<<<< Command Text >>>>
+
+B<<< I<<< Bold + Italics >>> >>>
+
+B<<< I<<< Bold + Italics + Strikethrough >>> >>>
+
+B<<< Strong Text (Synonym for Bold) >>>
+
+=cut
