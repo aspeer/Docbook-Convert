@@ -1,5 +1,5 @@
-Docbook::Convert - migrate Docbook article or refentry files to Markdown or POD
-===============================================================================
+Docbook::Convert - migrate Docbook files to Markdown or POD
+===========================================================
 
 This Perl module arose from the mixed results I had in migrating Docbook
 material to Markdown - and from there to POD - using pandoc, rman and
@@ -34,8 +34,8 @@ Installation
 The latest code will always be on GitHub. Install via the following
 commands:
 
-    git clone Docbook-Convert
-    cd Docbook-Convert
+    git clone https://github.com/aspeer/pm-Docbook-Convert.git
+    cd pm-Docbook-Convert
 
     # If on a modern system
     cpan .
@@ -75,11 +75,11 @@ LICENSE and COPYRIGHT
 This file is part of Docbook::Convert.
 
 This software is copyright (c) 2016 by Andrew Speer
-<andrew.speer@isolutions.com.au>.
+&lt;andrew.speer@isolutions.com.au&gt;.
 
 This is free software; you can redistribute it and/or modify it underthe
 same terms as the Perl 5 programming language system itself.
 
 Full license text is available at:
 
-<http://dev.perl.org/licenses/>
+&lt;http://dev.perl.org/licenses/&gt;
