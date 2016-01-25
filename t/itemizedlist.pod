@@ -1,0 +1,39 @@
+=pod
+
+=head1 1 Itemized List
+
+Itemized list inside para:
+
+=over
+
+=item * Itemized list item 1
+
+=item * Itemized list item 2
+
+item 2 line 2
+
+item 2 line 3
+
+=item * Itemized list item 3
+
+=back
+
+End para.
+
+Itemized list outside para:
+
+=over
+
+=item * Itemized list item 1
+
+=item * Itemized list item 2
+
+item 2 line 2
+
+item 2 line 3
+
+=item * Itemized list item 3
+
+=back
+
+=cut

@@ -1,0 +1,87 @@
+=pod
+
+=head1 Test 1
+
+=head1 NAME
+
+Test - Test Refentry
+
+=head1 SYNOPSIS
+
+C<<<< test1 [-h] [-f I<<< filename >>>] >>>>
+
+C<<<< test2 {-b} >>>>
+
+C<<<< test3 [-1] [-2] [ [-1] | [-2] | I<<<  >>> | [I<<< -filename >>>] ] >>>>
+
+C<<<< test4 [-1] >>>>
+
+C<<<< [-2] >>>>
+
+=head1 Description
+
+This is a test refentry used for unit testing in Docbook::Convert
+
+Itemized List:
+
+=over
+
+=item * List Entry 1
+
+Sub Entry 1
+
+=item * List Entry 2
+
+Sub Entry 2.1
+
+Sub Entry 2.2
+
+=item * List Entry 3
+
+=back
+
+Para break 1
+
+Ordered List:
+
+=over
+
+=item 1. Item 1
+
+Sub Item
+
+=item 2. Item 2
+
+Sub Item 2.1
+
+Sub Item 2.2
+
+=item 3. Item 3
+
+=back
+
+Para break 2
+
+Variable List
+
+=over
+
+=item * B<<< List Item 1 >>>
+
+List Item 1 Text
+
+=item * B<<< List Item 2 >>>
+
+List Item 2 Test Line 1
+
+List Item 2 Test Line 2
+
+=item * B<<< List Item 3 >>>
+
+List Item 3 Text
+
+=back
+
+Para break 3
+
+=cut

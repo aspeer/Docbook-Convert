@@ -1,0 +1,13 @@
+=pod
+
+=head1 1 Command Synopsis
+
+C<<<< command1 [-1] [-2] [-f I<<< filename >>>] >>>>
+
+C<<<< command2 [-1] [-2] [ [-3] | [-4] | [-5] ] [-o I<<< option1 >>>] {-o option2} [-o option3]... filename >>>>
+
+C<<<< command1 [-1] >>>>
+
+C<<<< [-2] [-f I<<< filename >>>] >>>>
+
+=cut
