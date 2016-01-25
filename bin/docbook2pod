@@ -12,6 +12,8 @@
 #  <http://dev.perl.org/licenses/>
 #
 use strict;
+use vars qw($VERSION);
+$VERSION='0.002';
 use FindBin qw($Bin);
 my ($handler)=($0=~/docbook2(\w+)$/);
 exec "$Bin/docbook-convert", "--handler=$handler", @ARGV
