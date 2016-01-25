@@ -40,17 +40,30 @@ $VERSION='0.005';
 #===================================================================================================
 
 
+sub _anchor {
+
+    my ($self, $id)=@_;
+    my $anchor=qq(<a name="$id"></a>);
+    return $anchor;
+
+}
+
+
+sub _anchor_fix {
+
+    #  Nothing to fix in markdown
+    #
+    my ($self, $output)=@_;
+    return $output;
+
+}
+
+
 sub _bold {
     my ($self, $text)=@_;
     return "**$text**";
 }
 
-
-sub _strikethrough {
-    my ($self, $text)=@_;
-    return "~~$text~~";
-}
-    
 
 sub _code {
     my ($self, $text)=@_;
@@ -134,9 +147,10 @@ sub _link {
 }
 
 
-sub _list_item {
-    my ($self, $text)=@_;
-    return $text;
+sub _list {
+    my $self=shift;
+    my $text=shift;
+    return "+ $text";
 }
 
 
@@ -150,15 +164,9 @@ sub _list_end {
 }
 
 
-sub _list {
-    my $self=shift;
-    my $text=shift;
-    return "+ $text";
-}
-
-
-sub _variablelist_join {
-    return "${CR2}${SP4}";
+sub _list_item {
+    my ($self, $text)=@_;
+    return $text;
 }
 
 
@@ -167,30 +175,24 @@ sub _listitem_join {
 }
 
 
-sub _anchor {
-
-    my ($self, $id)=@_;
-    my $anchor=qq(<a name="$id"></a>);
-    return $anchor;
-
-}
-
-
-sub _anchor_fix {
-
-    #  Nothing to fix in markdown
-    #
-    my ($self, $output)=@_;
-    return $output;
-
-}
-
 sub _prefix {
     return undef;
 }
 
+
+sub _strikethrough {
+    my ($self, $text)=@_;
+    return "~~$text~~";
+}
+
+
 sub _suffix {
     return undef;
+}
+
+
+sub _variablelist_join {
+    return "${CR2}${SP4}";
 }
 
 1;

@@ -51,18 +51,18 @@ $VERSION='0.005';
 #===================================================================================================
 
 
-sub text {
-    my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
-    return $text;
-}
-
 sub replaceable {
     my ($self, $data_ar)=@_;
     my $text=$self->find_node_text($data_ar, $NULL);
     return $self->_italic($text);
 }
-    
+
+
+sub text {
+    my ($self, $data_ar)=@_;
+    my $text=$self->find_node_text($data_ar, $NULL);
+    return $text;
+}
 
 
 1;

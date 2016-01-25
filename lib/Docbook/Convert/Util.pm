@@ -55,6 +55,32 @@ $VERSION='0.005';
 #===================================================================================================
 
 
+sub dump_ar {
+
+    my $data_ar=shift();
+    my $cr=sub {
+        my ($cr, $data_ar)=@_;
+        if ($data_ar->[$NODE_IX] eq 'text') {
+            foreach my $ix (0..@{$data_ar->[$PRNT_IX][$CHLD_IX]}) {
+                if ($data_ar->[$PRNT_IX][$CHLD_IX][$ix] eq $data_ar) {
+                    $data_ar->[$PRNT_IX][$CHLD_IX][$ix]=$data_ar->[$CHLD_IX][0];
+                }
+            }
+        }
+        foreach my $ar (@{$data_ar->[$CHLD_IX]}) {
+            if (ref($ar)) {
+                $cr->($cr, $ar);
+            }
+            $data_ar->[$PRNT_IX]=$data_ar->[$PRNT_IX][$NODE_IX];
+        }
+
+    };
+    $cr->($cr, $data_ar);
+    return $data_ar;
+
+}
+
+
 sub err {
 
 
@@ -62,7 +88,7 @@ sub err {
     #
     my $msg=shift();
     my $err=&fmt("*error*\n\n" . ucfirst($msg), @_);
-    return $ERR_BACKTRACE ? confess $err :  croak $err;
+    return $ERR_BACKTRACE ? confess $err : croak $err;
 
 }
 
@@ -89,32 +115,6 @@ sub msg {
 
     #  Print message
     #
-    CORE::print &fmt(@_), "\n" if $VERBOSE;;
-
-}
-
-
-sub dump_ar {
-
-    my $data_ar=shift();
-    my $cr=sub {
-        my ($cr, $data_ar)=@_;
-        if ($data_ar->[$NODE_IX] eq 'text') {
-            foreach my $ix (0..@{$data_ar->[$PRNT_IX][$CHLD_IX]}) {
-                if ($data_ar->[$PRNT_IX][$CHLD_IX][$ix] eq $data_ar) {
-                    $data_ar->[$PRNT_IX][$CHLD_IX][$ix]=$data_ar->[$CHLD_IX][0];
-                }
-            }
-        }
-        foreach my $ar (@{$data_ar->[$CHLD_IX]}) {
-            if (ref($ar)) {
-                $cr->($cr, $ar);
-            }
-            $data_ar->[$PRNT_IX]=$data_ar->[$PRNT_IX][$NODE_IX];
-        }
-
-    };
-    $cr->($cr, $data_ar);
-    return $data_ar;
+    CORE::print &fmt(@_), "\n" if $VERBOSE;
 
 }

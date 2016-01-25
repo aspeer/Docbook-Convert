@@ -46,6 +46,7 @@ $VERSION='0.005';
 
 #===================================================================================================
 
+
 sub data_ar {
 
     #  Container to hold node tree
@@ -139,15 +140,11 @@ sub parse {
 }
 
 
-sub process_file {
+sub pod_replace {
 
-    #  Open file we want to process
-    #
-    my ($self, $fn, $param_hr)=@_;
-    my $fh=IO::File->new($fn, O_RDONLY) ||
-        return err("unable to open file $fn, $!");
-    return $self->process($fh, $param_hr);
-    
+    #  Shortcut for convenience
+    return Docbook::Convert::POD::Util::_pod_replace(@_);
+
 }
 
 
@@ -216,6 +213,18 @@ sub process {
     #  Done
     #
     return $output;
+
+}
+
+
+sub process_file {
+
+    #  Open file we want to process
+    #
+    my ($self, $fn, $param_hr)=@_;
+    my $fh=IO::File->new($fn, O_RDONLY) ||
+        return err ("unable to open file $fn, $!");
+    return $self->process($fh, $param_hr);
 
 }
 
@@ -313,13 +322,6 @@ sub start_tag_handler {
 }
 
 
-sub pod_replace {
-
-    #  Shortcut for convenience
-    return Docbook::Convert::POD::Util::_pod_replace(@_);
-    
-}
-
 sub AUTOLOAD {
 
     #  Catchall for handler shortcuts, e.g. Docbook::Convert->markdown();
@@ -327,17 +329,18 @@ sub AUTOLOAD {
     my ($self, $xml, $param_hr)=@_;
     my ($handler)=($AUTOLOAD=~/::(\w+)$/);
     if ($handler=~s/_file$//) {
-        return $self->process_file($xml, {%{$param_hr}, handler=>$handler});
+        return $self->process_file($xml, {%{$param_hr}, handler => $handler});
     }
     else {
-        return $self->process($xml, {%{$param_hr}, handler=>$handler});
+        return $self->process($xml, {%{$param_hr}, handler => $handler});
     }
 }
 
+
 sub DESTROY {
-    
+
     #  Stub so not invoked by AUTOLOAD
-    
+
 }
 
 1;

@@ -16,7 +16,6 @@ use lib qw(lib);
 use vars qw($VERSION);
 
 
-
 #  External modules
 #
 use IO::File;
@@ -51,22 +50,23 @@ exit ${&main(&getopt(\@ARGV)) || die 'unknown error'};
 
 #===================================================================================================
 
+
 sub getopt {
 
 
     #  Parse options and dispatch to actual work routine below
     #
     my $argv_ar=shift();
-    
-    
+
+
     #  Get options
     #
     my %opt;
-    
-    
+
+
     #  Converts some constant settings into settable options
     #
-    my @getopt_constant=map { $GETOPT_CONSTANT_HR->{$_} ? $_.$GETOPT_CONSTANT_HR->{$_} : $_ } 
+    my @getopt_constant=map {$GETOPT_CONSTANT_HR->{$_} ? $_ . $GETOPT_CONSTANT_HR->{$_} : $_}
         keys %{$GETOPT_CONSTANT_HR};
 
 
@@ -83,15 +83,15 @@ sub getopt {
         print "$Script version: $VERSION\n";
         exit 0
     };
-    
-    
+
+
     #  Debug
     #
     $opt{'dumpopt'} && do {
         print Dumper([sort @{$GETOPT_AR}, @getopt_constant]);
         exit 0;
     };
-    
+
 
     # Recursing ?
     #
@@ -116,16 +116,16 @@ sub getopt {
     unless (@{$opt{'infile'}}) {
         $opt{'infile'}=@{$argv_ar} ? $argv_ar : [\*STDIN];
     }
-    
-    
+
+
     #  Set handler
     #
     $opt{'handler'} ||= (
         ($opt{'markdown'} && 'markdown') ||
-        ($opt{'pod'} && 'pod') ||
-        $HANDLER_DEFAULT
+            ($opt{'pod'}  && 'pod')      ||
+            $HANDLER_DEFAULT
     );
-    
+
 
     #  Done
     #
@@ -156,6 +156,7 @@ sub main {
         }
         elsif (my $out_fn=$opt_hr->{'outfile'}) {
             if ($out_fn=~/^\.(.*)$/) {
+
                 #  Output file option is something like '.foo'. Means add '.foo' to input file name
                 #  and make that the output file name
                 #
@@ -163,8 +164,8 @@ sub main {
                 ($out_fn=$fn)=~s/\Q$XMLSUFFIX\E$//;
                 $out_fn.=".${ext}";
             }
-            my $out_fh=IO::File->new($out_fn, O_WRONLY|O_CREAT|O_TRUNC) ||
-                return err("unable to write to output file $out_fn, $!");
+            my $out_fh=IO::File->new($out_fn, O_WRONLY | O_CREAT | O_TRUNC) ||
+                return err ("unable to write to output file $out_fn, $!");
             print $out_fh $output;
         }
         else {
@@ -172,7 +173,7 @@ sub main {
         }
     }
     return \undef;
-    
+
 }
 
 __END__

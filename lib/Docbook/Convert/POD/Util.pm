@@ -40,16 +40,28 @@ $VERSION='0.005';
 #===================================================================================================
 
 
-sub _bold {
-    my ($self, $text)=@_;
-    return "B<<< $text >>>";
+sub _anchor {
+    return undef;
 }
 
 
-sub _strikethrough {
-    #  No strikethrough in POD
+sub _anchor_fix {
+
+    #  Fix anchor refs to point to POD headers
+    #
+    my ($self, $output, $id_hr)=@_;
+    while (my ($id, $title)=each %{$self->{'_id'}}) {
+        $title=~s/\W+/-/g;
+        $output=~s/L\<(.*?)\|#\Q$id\E/L\<$1|\"$title\"/g;
+    }
+    return $output;
+
+}
+
+
+sub _bold {
     my ($self, $text)=@_;
-    return $text;
+    return "B<<< $text >>>";
 }
 
 
@@ -92,6 +104,13 @@ sub _h4 {
 }
 
 
+sub _image {
+
+    #  Only HTML images available in POD
+    shift()->_image_html(@_);
+}
+
+
 sub _image_html {
     my ($self, $url, $alt_text, $title, $attr_hr)=@_;
     my $width=$attr_hr->{'width'};
@@ -104,13 +123,6 @@ sub _image_html {
 =end HTML
 HERE
     return $html
-}
-
-
-sub _image {
-
-    #  Only HTML images available in POD
-    shift()->_image_html(@_);
 }
 
 
@@ -147,41 +159,8 @@ sub _list_item {
 }
 
 
-sub _variablelist_join {
-    return "${CR2}";
-}
-
-
 sub _listitem_join {
     &_variablelist_join(@_);
-}
-
-
-sub _anchor {
-    return undef;
-}
-1;
-
-
-sub _anchor_fix {
-
-    #  Fix anchor refs to point to POD headers
-    #
-    my ($self, $output, $id_hr)=@_;
-    while (my ($id, $title)=each %{$self->{'_id'}}) {
-        $title=~s/\W+/-/g;
-        $output=~s/L\<(.*?)\|#\Q$id\E/L\<$1|\"$title\"/g;
-    }
-    return $output;
-
-}
-
-sub _prefix {
-    return '=pod';
-}
-
-sub _suffix {
-    return '=cut';
 }
 
 
@@ -230,6 +209,30 @@ sub _pod_replace {
     #
     return $ppi_doc_or->save($fn);
 
+}
+1;
+
+
+sub _prefix {
+    return '=pod';
+}
+
+
+sub _strikethrough {
+
+    #  No strikethrough in POD
+    my ($self, $text)=@_;
+    return $text;
+}
+
+
+sub _suffix {
+    return '=cut';
+}
+
+
+sub _variablelist_join {
+    return "${CR2}";
 }
 
 

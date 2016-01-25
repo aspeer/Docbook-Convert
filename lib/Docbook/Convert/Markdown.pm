@@ -29,7 +29,7 @@ no warnings qw(uninitialized);
 #
 use Docbook::Convert::Constant;
 use Data::Dumper;
-use CGI; # for HTMLescape
+use CGI;    # for HTMLescape
 
 
 #  Inherit Base functions (find_node etc.)
@@ -79,8 +79,10 @@ sub _dont_escape {
 sub _escape {
 
     my ($self, $text)=@_;
+
     #  Escape markdown characters
     $text=~s/\s+([*_`\\{}\[\]\(\)#+-\.\!]+)/ \\$1/g;
+
     #  And HTML
     $text=CGI::escapeHTML($text);
     return $text;
