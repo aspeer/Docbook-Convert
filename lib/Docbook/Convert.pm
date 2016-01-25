@@ -41,7 +41,7 @@ use Data::Dumper;
 #  Version information in a format suitable for CPAN etc. Must be
 #  all on one line
 #
-$VERSION='0.005';
+$VERSION='0.006';
 
 
 #===================================================================================================
@@ -496,10 +496,10 @@ This file is part of Docbook::Convert.
 
 This software is copyright (c) 2016 by Andrew Speer <andrew.speer@isolutions.com.au>.
 
-This is free software; you can redistribute it and/or modify it underthe same terms as the Perl 5 programming language system itself.
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 Full license text is available at:
-
-<http://dev.perl.org/licenses/>
+L<http://dev.perl.org/licenses/>
 
 =cut
