@@ -27,7 +27,6 @@ no warnings qw(uninitialized);
 
 #  External modules
 #
-#use Docbook::Convert::Markdown::Util;
 use Docbook::Convert::Constant;
 use Data::Dumper;
 
@@ -45,29 +44,10 @@ $VERSION='0.001';
 
 #  Make synonyms
 #
-&create_tag_synonym;
+&Docbook::Convert::Base::create_tag_synonym($ALL_TAG_SYNONYM_HR);
 
 
 #===================================================================================================
-
-
-sub create_tag_synonym {    ## no subsort
-
-    #  Create tag formatting equivalents
-    #
-    my %tag_synonym=(
-        command    => [qw(classname parameter filename markup)],
-        refsection => [qw(refsect1)],
-        para       => [qw(simpara)],
-        _text      => [qw(refentry article literallayout)],
-        _null      => [qw(imageobject)]
-    );
-    while (my ($tag, $tag_synonym_ar)=each %tag_synonym) {
-        foreach my $tag_synonym (@{$tag_synonym_ar}) {
-            *{$tag_synonym}=sub {shift()->$tag(@_)}
-        }
-    }
-}
 
 
 sub _text {
@@ -80,22 +60,50 @@ sub _text {
 }
 
 
-sub _null {
+sub _data {
     my ($self, $data_ar)=@_;
     return $data_ar;
 }
 
 
+sub _null {
+    my ($self, $data_ar)=@_;
+    return undef;;
+}
+
+
+sub sbr {
+    my ($self, $data_ar)=@_;
+    #  This gets cleaned up by the _code routine
+    return "<**SBR**>";
+}
+
 sub arg {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $SP);
-    return $self->_code("[$text]");
+    #my $text=$self->find_node_text($data_ar, $SP);
+    my $text=$self->find_node_text($data_ar, $NULL);
+    my $attr_hr=$data_ar->[$ATTR_IX] && $data_ar->[$ATTR_IX];
+    if ((my $choice=$attr_hr->{'choice'}) eq 'req') {
+        $text="{$text}";
+    }
+    elsif ($choice eq 'plain') {
+        #  Do nothing
+        #
+    }
+    else {
+        #  Choice is default - "opt"
+        $text="[$text]";
+    }
+    if ($attr_hr->{'rep'} eq 'repeat') {
+        $text.='...';
+    }
+    return $self->_code($text);
 }
 
 
 sub blockquote {
     my ($self, $data_ar)=@_;
-    my @text=$self->find_node_text($data_ar);
+    my @text=@{$self->find_node_text($data_ar)};
     my $text;
     foreach my $line (@text) {
         my @line=($line=~/^(.*)$/gm);
@@ -118,7 +126,7 @@ sub cmdsynopsis {
 
 sub command {
     my ($self, $data_ar)=@_;
-    if ($self->find_parent($data_ar, 'screen')) {
+    if ($self->find_parent($data_ar, 'screen|programlisting')) {
 
         #  render later
         return $data_ar;
@@ -142,13 +150,108 @@ sub emphasis {
     my $text=$self->find_node_text($data_ar, $NULL);
     my $attr_hr=$data_ar->[$ATTR_IX];
     my $role=$attr_hr->{'role'};
-    if ($role eq 'bold') {
-        $self->_bold($text);
+    if (($role eq 'bold') || ($role eq 'strong')) {
+        return $self->_bold($text);
+    }
+    elsif ($role eq 'strikethrough') {
+        return $self->_strikethrough($text);
     }
     else {
-        $self->_italic($text);
+        return $self->_italic($text);
     }
 }
+
+
+sub _meta {
+    my ($self, $data_ar)=@_;
+    my $text=$self->find_node_text($data_ar, $SP);
+    my $key=$data_ar->[$NODE_IX];
+    $self->{'_meta'}{$key}=$text;
+    return undef;
+}
+    
+
+sub _text_cleanup {
+
+    my ($self, $text)=@_;
+    $text=~s/^(\s*${CR}){2,}/${CR}/gm;
+    return $text;
+    
+}
+    
+
+sub article {
+
+    my ($self, $data_ar)=@_;
+    
+    #  Rendering an article. Get article body
+    #
+    my @text=@{$self->find_node_text($data_ar)};
+
+    
+    #  Title
+    #
+    my $meta_title=$self->find_node_tag_text($data_ar, 'title', $NULL);
+    $self->{'_meta'}{'title'}=$meta_title;
+    
+    
+    #  Any prefix/suffix to be appended (e.g. =pod, =cut for POD);
+    my ($prefix, $suffix)=map { $self->$_() } qw(_prefix _suffix);
+    
+    
+    #  Shortcut any relevent params we will need
+    #
+    my ($meta_display_top, $meta_display_bottom, $meta_display_title,
+        $meta_display_title_h_style)=@{$self}{qw(
+            meta_display_top
+            meta_display_bottom
+            meta_display_title
+            meta_display_title_h_style
+        )};
+
+
+    #  Do we want to display meta data - if so format and spit out
+    #
+    if ($meta_display_top || $meta_display_bottom) {
+
+
+        #  Generate title if requested
+        #
+        if ($meta_display_title) {
+            if (my $h_style="_${meta_display_title_h_style}") {
+                $meta_display_title=$self->$h_style($meta_display_title);
+            }
+        }
+
+        #  Gather key: value meta data tags
+        #
+        my @meta;
+        foreach my $key ('title', @{$ALL_TAG_SYNONYM_HR->{'_meta'}}) {
+            if (my $value=$self->{'_meta'}{$key}) {
+                my $meta_key=ucfirst($key);
+                push @meta, "$meta_key: $value";
+            }
+        }
+        my $meta=join($CR, @meta);
+        
+        
+        #  Output at top or bottom as required
+        #
+        if ($meta_display_top) {
+            return $self->_text_cleanup(
+                join($CR2, grep {$_} $prefix, $meta_display_title, $meta, @text, $suffix));
+        }
+        if ($meta_display_bottom) {
+            return $self->_text_cleanup(
+                join($CR2, grep {$_} $prefix, @text, $meta_display_title, $meta, $suffix));
+        }
+            
+    }
+    else {
+        return $self->_text_cleanup(
+            join($CR2, grep {$_} $prefix, @text, $suffix));
+    }
+} 
 
 
 sub figure {
@@ -170,10 +273,11 @@ sub itemizedlist0 {
 sub itemizedlist {
     my ($self, $data_ar)=@_;
     my @list;
-    foreach my $text ($self->find_node_text($data_ar)) {
+    foreach my $text (@{$self->find_node_text($data_ar)}) {
         push @list, $self->_list_item("* $text");
     }
-    return join($CR2, grep {$_} $self->_list_begin(), @list, $self->_list_end);
+    #return join($CR2, grep {$_} $self->_list_begin(), @list, $self->_list_end);
+    return join($CR2, $self->_list_begin(), @list, $self->_list_end);
 }
 
 
@@ -182,22 +286,33 @@ sub variablelist {
     my @list;
     foreach my $ar (@{$self->find_node($data_ar, 'varlistentry')}) {
         my $text=$self->find_node_text($ar, $self->_variablelist_join());
-        push @list, "* $text";
+        push @list, $self->_list_item("* $text");
     }
-    return join($CR2, grep {$_} $self->_list_begin(), @list, $self->_list_end);
+    #return join($CR2, grep {$_} $self->_list_begin(), @list, $self->_list_end);
+    return join($CR2, $self->_list_begin(), @list, $self->_list_end);
 }
 
 
 sub orderedlist {
     my ($self, $data_ar)=@_;
     my (@list, $count);
-    foreach my $text ($self->find_node_text($data_ar)) {
+    foreach my $text (@{$self->find_node_text($data_ar)}) {
         $count++;
         push @list, $self->_list_item("$count. $text");
     }
-    return join($CR2, grep {$_} $self->_list_begin(), @list, $self->_list_end);
+    #return join($CR2, grep {$_} $self->_list_begin(), @list, $self->_list_end);
+    return join($CR2, $self->_list_begin(), @list, $self->_list_end);
 }
 
+sub group {
+
+    my ($self, $data_ar)=@_;
+    my ($text_ar)=$self->find_node_text($data_ar);
+    my $text=join(' | ', @{$text_ar});
+    $text="[ $text ]" if (@{$text_ar} > 1);
+    return $text;
+
+}
 
 sub link {
     my ($self, $data_ar)=@_;
@@ -233,8 +348,8 @@ sub listitem {
 
 sub mediaobject {
     my ($self, $data_ar)=@_;
-    if ($self->find_parent($data_ar, 'figure')) {
-
+    #if ($self->find_parent($data_ar, 'figure')) {
+    if ($self->find_parent($data_ar, $MEDIAOBJECT_DELAY_RENDER_AR)) {
         #  render later
         return $data_ar;
     }
@@ -271,7 +386,7 @@ sub programlisting {
 
 
 sub refmeta {
-    my ($self,          $data_ar)=@_;
+    my ($self, $data_ar)=@_;
     my ($refentrytitle, $manvolnum)=
         $self->find_node_tag_text($data_ar, 'refentrytitle|manvolnum', $NULL);
     my $text=$self->_h1("$refentrytitle $manvolnum");
@@ -281,10 +396,11 @@ sub refmeta {
 
 sub refnamediv {
 
-    my ($self,    $data_ar)=@_;
+    my ($self, $data_ar)=@_;
     my ($refname, $refpurpose)=
-        $self->find_node_tag_text($data_ar, 'refname|refpurpose');
-    my $text=$self->_h2('NAME') . $CR2 . join(' - ', grep {$_} $refname, $refpurpose);
+        $self->find_node_tag_text($data_ar, 'refname|refpurpose', $NULL);
+    my $heading=$REFENTRY_TEXT_HR->{'name'};
+    my $text=$self->_h1($heading) . $CR2 . join(' - ', grep {$_} $refname, $refpurpose);
     return $text;
 }
 
@@ -292,9 +408,9 @@ sub refnamediv {
 sub refsection {
     my ($self,  $data_ar)=@_;
     my ($title, $subtitle)=
-        $self->find_node_tag_text($data_ar, 'title|subtitle');
+        $self->find_node_tag_text($data_ar, 'title|subtitle', $NULL);
     my $text=$self->find_node_text($data_ar, $CR2);
-    return join($CR2, $self->_h2($title), $text);
+    return join($CR2, $self->_h1($title), $text);
 }
 
 
@@ -315,7 +431,7 @@ sub appendix {
     $cr->($cr, $app_ix);
     my $label=join(undef, @label);
     my ($title, $subtitle)=
-        $self->find_node_tag_text($data_ar, 'title|subtitle');
+        $self->find_node_tag_text($data_ar, 'title|subtitle', $NULL);
     my $text=$self->find_node_text($data_ar, $CR2);
     my $appendix=$self->_h1("Appendix $label: $title");
     return join($CR2, $appendix, $text);
@@ -374,7 +490,7 @@ sub _sect {
     }
     my $text=$self->find_node_text($data_ar, $CR2);
     my $tag=$data_ar->[$NODE_IX];
-    my ($h_level)=($tag=~/(\d+)$/);
+    my ($h_level)=($tag=~/(\d+)$/) || 1;
     $h_level="_h${h_level}";
     return join($CR2, grep {$_} $anchor, $self->$h_level("$count $title"), $text);
 }
@@ -382,8 +498,10 @@ sub _sect {
 
 sub refsynopsisdiv {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
-    $text=$self->_h2('SYNOPSIS') . $CR2 . $text;
+    #my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->find_node_text($data_ar, $CR2);
+    my $heading=$REFENTRY_TEXT_HR->{'synopsis'};
+    $text=$self->_h1($heading) . $CR2 . $text;
     return $text;
 }
 
@@ -399,21 +517,45 @@ sub screen {
 sub term {
     my ($self, $data_ar)=@_;
     my $text=$self->find_node_text($data_ar, $NULL);
-    return $self->_bold($self->_code($text));
+    #return $self->_bold($self->_code($text));
+    return $self->_bold($text);
+}
+
+
+sub warning { # synonym for caution, important, note, tip
+    my ($self, $data_ar)=@_;
+    my $tag=$data_ar->[$NODE_IX];
+    my $text=$self->find_node_text($data_ar, $NULL);
+    $tag=lc($tag);
+    my $admonition=$self->_bold($ADMONITION_TEXT_HR->{$tag});
+    return $CR2 . "$admonition: $text";
 }
 
 
 sub _image_build {
+
+    #  Build image output
+    #
     my ($self, $data_ar)=@_;
+    
+    
+    #  Get alt text, title, URL etc/
     my $alt_text1=$self->find_node_tag_text($data_ar, 'alt', $NULL);
-    my $title=$self->find_node_tag_text($data_ar, 'title', $NULL);
+    my $title=$self->find_node_tag_text($data_ar, 'title|caption|screeninfo', $NULL);
     my $image_data_ar=$self->find_node($data_ar, 'imagedata');
     my $image_data_attr_hr=$image_data_ar->[0][$ATTR_IX];
     my $alt_text2=$image_data_attr_hr->{'annotations'};
     my $alt_text=$alt_text1 || $alt_text2;
     my $url=$image_data_attr_hr->{'fileref'};
-
-    if ((my $scale=$image_data_attr_hr->{'scale'}) && !$NO_HTML && !$NO_IMAGE_FETCH) {
+    
+    #  Generation Options
+    #
+    my ($no_html, $no_image_fetch)=@{$self}{qw(no_html no_image_fetch)};
+    
+    
+    #  Fetch image to calc width etc. if needed
+    #
+    if ((my $scale=$image_data_attr_hr->{'scale'}) && !$no_html && !$no_image_fetch) {
 
         #  Get Image width
         #
@@ -421,6 +563,9 @@ sub _image_build {
         $width *= ($scale/100);
         $image_data_attr_hr->{'width'}=$width;
     }
+    
+    #  Return output
+    #
     return $self->_image($url, $alt_text, $title, $image_data_attr_hr);
 }
 

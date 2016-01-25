@@ -27,7 +27,6 @@ no warnings qw(uninitialized);
 
 #  External modules
 #
-#use Docbook::Convert::POD::Util;
 use Docbook::Convert::Constant;
 use Data::Dumper;
 
@@ -47,35 +46,9 @@ $VERSION='0.001';
 
 #  Make synonyms
 #
-&create_tag_synonym;
+&Docbook::Convert::Base::create_tag_synonym($POD_TAG_SYNONYM_HR);
 
 #===================================================================================================
-
-
-sub new {
-
-    #  New instance
-    #
-    my $class=shift();
-    return bless((my $self={}), ref($class) || $class);
-
-}
-
-
-sub create_tag_synonym {
-
-    #  Create tag equivalents
-    #
-    my %tag_synonym=(
-        screen => [qw(programlisting)],
-        _text  => [qw(blockquote)],
-    );
-    while (my ($tag, $tag_synonym_ar)=each %tag_synonym) {
-        foreach my $tag_synonym (@{$tag_synonym_ar}) {
-            *{$tag_synonym}=sub {shift()->$tag(@_)}
-        }
-    }
-}
 
 
 sub text {
@@ -84,5 +57,14 @@ sub text {
     return $text;
 }
 
+sub replaceable {
+    my ($self, $data_ar)=@_;
+    my $text=$self->find_node_text($data_ar, $NULL);
+    return $self->_italic($text);
+}
+    
+
+
 1;
+
 __END__

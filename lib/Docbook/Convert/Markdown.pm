@@ -20,16 +20,16 @@ package Docbook::Convert::Markdown;
 #  Pragma
 #
 use strict qw(vars);
-use vars qw($VERSION $AUTOLOAD @ISA);
+use vars qw($VERSION);
 use warnings;
 no warnings qw(uninitialized);
 
 
 #  External modules
 #
-#use Docbook::Convert::Markdown::Util;
 use Docbook::Convert::Constant;
 use Data::Dumper;
+use CGI; # for HTMLescape
 
 
 #  Inherit Base functions (find_node etc.)
@@ -47,34 +47,10 @@ $VERSION='0.001';
 
 #  Make synonyms
 #
-&create_tag_synonym;
+&Docbook::Convert::Base::create_tag_synonym($MD_TAG_SYNONYM_HR);
+
 
 #===================================================================================================
-
-
-sub new {    ## no subsort
-
-    #  New instance
-    #
-    my ($class, @param)=@_;
-    return bless((my $self={@param}), ref($class) || $class);
-
-}
-
-
-sub create_tag_synonym {    ## no subsort
-
-    #  Create markdown equivalents
-    #
-    my $self=shift();
-    my %tag_synonym=(
-    );
-    while (my ($tag, $tag_synonym_ar)=each %tag_synonym) {
-        foreach my $tag_synonym (@{$tag_synonym_ar}) {
-            *{$tag_synonym}=sub {shift()->$tag(@_)}
-        }
-    }
-}
 
 
 sub text {
@@ -90,16 +66,7 @@ sub text {
 sub _dont_escape {
 
     my ($self, $data_ar)=@_;
-    my @tag=qw(
-        command
-        screen
-        arg
-        markup
-        programlisting
-        term
-    );
-
-    if ($self->find_parent($data_ar, \@tag)) {
+    if ($self->find_parent($data_ar, $MD_DONT_ESCAPE_AR)) {
         return 1;
     }
     else {
@@ -112,10 +79,10 @@ sub _dont_escape {
 sub _escape {
 
     my ($self, $text)=@_;
-    use CGI;
+    #  Escape markdown characters
     $text=~s/\s+([*_`\\{}\[\]\(\)#+-\.\!]+)/ \\$1/g;
+    #  And HTML
     $text=CGI::escapeHTML($text);
-
     return $text;
 
 }

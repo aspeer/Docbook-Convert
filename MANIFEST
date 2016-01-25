@@ -10,8 +10,13 @@ lib/Docbook/Convert/Constant.pm
 lib/Docbook/Convert/Markdown.pm
 lib/Docbook/Convert/Base.pm
 lib/Docbook/Convert.pm
+lib/Docbook/Convert.pm.xml
 LICENSE
-README
+README.xml
 README.md
-bin/docbook2md.pl
+bin/docbook-convert
+bin/docbook-convert.xml
+bin/docbook2md
+bin/docbook2pod
 MANIFEST.SKIP
+README                                   
