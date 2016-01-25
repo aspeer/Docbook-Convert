@@ -152,7 +152,7 @@ sub main {
             unless (-f $out_fn) {
                 return err ("can't merge into file '$out_fn', file does not exist");
             }
-            Docbook::Convert::POD::Util->_pod_replace($out_fn, \$output);
+            Docbook::Convert->pod_replace($out_fn, $output);
         }
         elsif (my $out_fn=$opt_hr->{'outfile'}) {
             if ($out_fn=~/^\.(.*)$/) {

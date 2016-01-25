@@ -21,8 +21,6 @@ my %WriteMakefile=(
     PREREQ_PM           =>  {
         'Test::Simple'  =>  0.44,
         'XML::Twig'     =>  0,
-        'Pod::Usage'    =>  0,
-        'Getopt::Long'  =>  0,
     },
     META_MERGE => { 
         'meta-spec'     => {

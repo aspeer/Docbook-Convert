@@ -13,10 +13,10 @@ lib/Docbook/Convert.pm
 lib/Docbook/Convert.pm.xml
 LICENSE
 README.xml
-README
 README.md
 bin/docbook-convert
 bin/docbook-convert.xml
 bin/docbook2md
 bin/docbook2pod
 MANIFEST.SKIP
+README                                   

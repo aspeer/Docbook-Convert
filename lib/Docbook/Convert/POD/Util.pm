@@ -190,7 +190,7 @@ sub _pod_replace {
 
     #  Find and replace POD in a file
     #
-    my ($self, $fn, $pod_sr)=@_;
+    my ($self, $fn, $pod)=@_;
 
 
     #  Try to load PPI
@@ -204,7 +204,7 @@ sub _pod_replace {
     #  Create new PPI documents from supplied file and new POD
     #
     my $ppi_doc_or=PPI::Document->new($fn);
-    my $ppi_pod_or=PPI::Document->new($pod_sr);
+    my $ppi_pod_or=PPI::Document->new(\$pod);
 
 
     #  Prune existing POD

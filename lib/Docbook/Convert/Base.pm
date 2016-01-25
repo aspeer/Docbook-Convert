@@ -43,8 +43,6 @@ sub new {    ## no subsort
 
     #  New instance
     #
-    #my ($class, @param)=@_;
-    #return bless((my $self={@param}), ref($class) || $class);
     my ($class, $param_hr)=@_;
     my %self=(
         meta_display_top                => $META_DISPLAY_TOP,
@@ -59,6 +57,9 @@ sub new {    ## no subsort
     return bless(\%self, ref($class) || $class);
 
 }
+
+
+
 
 
 sub find_node {

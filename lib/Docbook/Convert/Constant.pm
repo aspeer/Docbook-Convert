@@ -214,6 +214,11 @@ my $constant_local_fn="${module_fn}.local";
         'no_warn_unhandled|silent|quiet|s|q',
         'handler|h=s'
     )],
+    
+
+    #  Detailed backtrace ?
+    #
+    ERR_BACKTRACE       => 0,
 
 
     #  Local constants override anything above

@@ -61,7 +61,8 @@ sub err {
     #  Quit on errors
     #
     my $msg=shift();
-    croak &fmt("*error*\n\n" . ucfirst($msg), @_);
+    my $err=&fmt("*error*\n\n" . ucfirst($msg), @_);
+    return $ERR_BACKTRACE ? confess $err :  croak $err;
 
 }
 

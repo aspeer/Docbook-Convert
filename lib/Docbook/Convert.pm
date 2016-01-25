@@ -46,19 +46,18 @@ $VERSION='0.001';
 
 #===================================================================================================
 
-
 sub data_ar {
 
     #  Container to hold node tree
     #
     my $self=shift();
     my @data=(
-        shift() || undef,    # NODE_IX
-        shift() || undef,    # CHLD_IX
-        shift() || undef,    # ATTR_IX
-        shift() || undef,    # LINE_IX
-        shift() || undef,    # COLM_IX
-        shift() || undef     # PRNT_IX
+        shift() || undef,    # NODE_IX - tag name
+        shift() || undef,    # CHLD_IX - array of child nodes
+        shift() || undef,    # ATTR_IX - attributes
+        shift() || undef,    # LINE_IX - line no this node was sourced from
+        shift() || undef,    # COLM_IX - col no " "
+        shift() || undef     # PRNT_IX - link to parent node
     );
     return \@data;
 
@@ -248,14 +247,14 @@ sub render {
 
     #  Any errors/warnings for unhandled tags ?
     #
-    if ((my $hr=$render_or->{'_autoload'}) && !$NO_WARN_UNHANDLED) {
+    if ((my $hr=$render_or->{'_autoload'}) && !$self->{'no_warn_unhandled'}) {
         my @data_ar=sort {($a->[$NODE_IX] cmp $b->[$NODE_IX]) or ($a->[$LINE_IX] <=> $b->[$LINE_IX])} grep {$_} values(%{$hr});
         foreach my $data_ar (@data_ar) {
             my ($tag, $line_no, $col_no)=@{$data_ar}[$NODE_IX, $LINE_IX, $COLM_IX];
             warn("warning - unrendered tag $tag at line $line_no, column $col_no\n");
         }
     }
-    if ((my $hr=$render_or->{'_autotext'}) && !$NO_WARN_UNHANDLED) {
+    if ((my $hr=$render_or->{'_autotext'}) && !$self->{'no_warn_unhandled'}) {
         my @data_ar=sort {($a->[$NODE_IX] cmp $b->[$NODE_IX]) or ($a->[$LINE_IX] <=> $b->[$LINE_IX])} grep {$_} values(%{$hr});
         foreach my $data_ar (@data_ar) {
             my ($tag, $line_no, $col_no)=@{$data_ar}[$NODE_IX, $LINE_IX, $COLM_IX];
@@ -313,6 +312,13 @@ sub start_tag_handler {
 
 }
 
+
+sub pod_replace {
+
+    #  Shortcut for convenience
+    return Docbook::Convert::POD::Util::_pod_replace(@_);
+    
+}
 
 sub AUTOLOAD {
 
