@@ -2,6 +2,7 @@
 #
 use strict;
 no strict qw(refs);
+no warnings qw(uninitialized redefine);
 
 #  Load
 #
@@ -107,7 +108,6 @@ foreach my $test_fn (sort {$a cmp $b } @test_fn) {
         #  Load reference file for handler
         #
         diag("test file ref: $ref_sn");
-        my $ref_fh;
         my $ref_fh=IO::File->new($ref_fn, O_RDONLY) ||
             fail("unable to open reference file $ref_sn");
         binmode($ref_fh);

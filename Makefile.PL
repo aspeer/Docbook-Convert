@@ -19,8 +19,8 @@ my %WriteMakefile=(
     AUTHOR              => 'Andrew Speer <andrew.speer@isolutions.com.au>',
     MIN_PERL_VERSION	=> '5.006',
     PREREQ_PM           =>  {
-        'Test::Simple'  =>  0.44,
-        'XML::Twig'     =>  0,
+        'Test::Simple'  =>  '0.44',
+        'XML::Twig'     =>  '3.40',
     },
     META_MERGE => { 
         'meta-spec'     => {

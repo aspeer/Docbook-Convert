@@ -334,6 +334,12 @@ sub AUTOLOAD {
     }
 }
 
+sub DESTROY {
+    
+    #  Stub so not invoked by AUTOLOAD
+    
+}
+
 1;
 __END__
 
