@@ -102,6 +102,8 @@ my $constant_local_fn="${module_fn}.local";
             markup
             programlisting
             term
+            code
+            option
             )
     ],
 
@@ -148,6 +150,7 @@ my $constant_local_fn="${module_fn}.local";
         refsection => [qw(refsect1)],
         para       => [qw(simpara)],
         warning    => [qw(caution important note tip)],
+        code	   => [qw(option)],
 
         #figure     => [qw(screenshot)],
         article => [qw(refentry)],

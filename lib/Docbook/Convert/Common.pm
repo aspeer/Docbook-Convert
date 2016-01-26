@@ -266,6 +266,13 @@ sub command {
 }
 
 
+sub code {
+    my ($self, $data_ar)=@_;
+    my $text=$self->find_node_text($data_ar, $NULL);
+    return $self->_code($text);
+}
+
+
 sub email {
     my ($self, $data_ar)=@_;
     my $email=$self->find_node_text($data_ar, $NULL);
@@ -343,16 +350,6 @@ sub itemizedlist {
 }
 
 
-sub itemizedlist0 {
-    my ($self, $data_ar)=@_;
-    my @text;
-    foreach my $text ($self->find_node_text($data_ar)) {
-        push @text, $self->_list($text);
-    }
-    return join($CR2, @text);
-}
-
-
 sub link {
     my ($self, $data_ar)=@_;
     my $attr_hr=$data_ar->[$ATTR_IX];
@@ -388,13 +385,6 @@ sub mediaobject {
     else {
         return $self->_image_build($data_ar);
     }
-}
-
-
-sub option {
-    my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
-    return $self->_code($text);
 }
 
 
@@ -575,6 +565,13 @@ sub ulink {
     my $url=$attr_hr->{'url'};
     my $text=$self->find_node_text($data_ar, $NULL);
     return $self->_link($url, $text);
+}
+
+
+sub uri {
+    my ($self, $data_ar)=@_;
+    my $text=$self->find_node_text($data_ar, $NULL);
+    return "<${text}>";
 }
 
 
