@@ -242,18 +242,12 @@ sub find_parent {
     unless (ref($tag_ar)) {
         $tag_ar=[split('\|', $tag_ar)];
     }
-    foreach my $tag (@{$tag_ar}) {
-
-        #print "test $tag vs $data_ar->[$NODE_IX]\n";
-        if ((my $t=$data_ar->[$NODE_IX]) eq $tag) {
-            return $data_ar;
-        }
-
-        #elsif (my $data_parent_ar=$data_ar->[$PRNT_IX]) {
-        #    return $self->find_parent($data_parent_ar, $tag_ar);
-        #}
-    }
     if (my $data_parent_ar=$data_ar->[$PRNT_IX]) {
+        foreach my $tag (@{$tag_ar}) {
+            if ((my $t=$data_parent_ar->[$NODE_IX]) eq $tag) {
+                return $data_parent_ar;
+            }
+        }
         return $self->find_parent($data_parent_ar, $tag_ar);
     }
     return undef;

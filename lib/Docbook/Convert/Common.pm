@@ -256,7 +256,6 @@ sub cmdsynopsis {
 sub command {
     my ($self, $data_ar)=@_;
     if ($self->find_parent($data_ar, 'screen|programlisting')) {
-
         #  render later
         return $data_ar;
     }
@@ -488,9 +487,33 @@ sub screen {
 
 sub sect1 {
     my ($self, $data_ar)=@_;
-    my $count_sect1=++$self->{'_sect1'};
-    delete @{$self}{qw(_sect2 _sect3 _sect4)};
-    return $self->_sect($data_ar, $count_sect1);
+    
+    #  Are we nested ?
+    #
+    my $count=1;
+    my $cr=sub {
+        my ($cr, $data_ar)=@_;
+        if (my $prnt_data_ar=$self->find_parent($data_ar, 'section')) {
+            $count++;
+            $cr->($cr, $prnt_data_ar);
+        }
+        else {
+            return undef;
+        }
+    };
+    $cr->($cr, $data_ar);
+    
+    #  If count > 1 then yes, pretend we are sect2, sect3 etc/
+    if ($count>1) {
+        my $sect="sect${count}";
+        return $self->$sect($data_ar);
+    }
+    else {
+        #  Not nested
+        my $count_sect1=++$self->{'_sect1'};
+        delete @{$self}{qw(_sect2 _sect3 _sect4)};
+        return $self->_sect($data_ar, $count_sect1);
+    }
 }
 
 

@@ -38,7 +38,7 @@ use Carp;
 #  Export functions
 #
 @ISA=qw(Exporter);
-@EXPORT=qw(err msg arg dump_ar);
+@EXPORT=qw(err msg dump_ar);
 
 
 #  Version information in a format suitable for CPAN etc. Must be
