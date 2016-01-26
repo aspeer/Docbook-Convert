@@ -421,6 +421,22 @@ sub para {
 }
 
 
+sub procedure {
+
+    my ($self, $data_ar)=@_;
+    my $title=$self->find_node_tag_text($data_ar, 'title', $NULL);
+    my @step;
+    my $count;
+    foreach my $ar (@{$self->find_node($data_ar, 'step')}) {
+        $count++;
+        my $text=$self->find_node_text($ar, $NULL);
+        push @step, "${count}\\. ${text}";
+    }
+    return join($CR2, $self->_bold($title), @step);
+
+}
+
+
 sub programlisting {
     my ($self, $data_ar)=@_;
     my $attr_hr=$data_ar->[$ATTR_IX];
@@ -429,6 +445,33 @@ sub programlisting {
     $text="${CR2}```${lang}${CR}${text}${CR}```${CR2}";
     return $text
 }
+
+
+sub qandadiv {
+
+    my ($self, $data_ar)=@_;
+    my $title=$self->find_node_tag_text($data_ar, 'title', $NULL);
+    my $text=$self->find_node_text($data_ar, $CR2);
+    return join($CR2, $self->_bold($title), $text);
+
+}    
+
+sub question {
+
+    my ($self, $data_ar)=@_;
+    my $text=$self->find_node_text($data_ar, $CR2);
+    return $self->_bold('Q: ').$text;
+
+}
+
+sub answer {
+
+    my ($self, $data_ar)=@_;
+    my $text=$self->find_node_text($data_ar, $CR2);
+    return $self->_bold('A: ').$text;
+
+}
+    
 
 
 sub quote {
