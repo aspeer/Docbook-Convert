@@ -420,6 +420,14 @@ sub programlisting {
 }
 
 
+sub quote {
+
+    my ($self, $data_ar)=@_;
+    my $text=$self->find_node_text($data_ar, $NULL);
+    return qq{\"$text\"};
+}
+
+
 sub refmeta {
     my ($self,          $data_ar)=@_;
     my ($refentrytitle, $manvolnum)=
