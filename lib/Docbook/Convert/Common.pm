@@ -447,6 +447,15 @@ sub programlisting {
 }
 
 
+sub menuchoice {
+
+    my ($self, $data_ar)=@_;
+    my $text=$self->find_node_text($data_ar, ' > ');
+    return $self->_bold($text);
+    
+}
+
+
 sub qandadiv {
 
     my ($self, $data_ar)=@_;

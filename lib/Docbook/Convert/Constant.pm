@@ -152,6 +152,7 @@ my $constant_local_fn="${module_fn}.local";
         warning    => [qw(caution important note tip)],
         code	   => [qw(option varname tag)],
         link	   => [qw(xref application)],
+        term	   => [qw(guilabel guibutton)],
 
         #figure     => [qw(screenshot)],
         article => [qw(refentry)],
