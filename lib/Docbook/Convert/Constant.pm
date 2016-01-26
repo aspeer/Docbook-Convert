@@ -151,7 +151,7 @@ my $constant_local_fn="${module_fn}.local";
         para       => [qw(simpara)],
         warning    => [qw(caution important note tip)],
         code	   => [qw(option)],
-        link	   => [qw(xref)],
+        link	   => [qw(xref application)],
 
         #figure     => [qw(screenshot)],
         article => [qw(refentry)],

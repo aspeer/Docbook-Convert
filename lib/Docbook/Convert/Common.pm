@@ -246,6 +246,13 @@ sub blockquote {
 }
 
 
+sub citetitle {
+    my ($self, $data_ar)=@_;
+    my $text=$self->find_node_text($data_ar, $NULL);
+    return $self->_italic($text);
+}
+
+
 sub cmdsynopsis {
     my ($self, $data_ar)=@_;
     my $text=$self->find_node_text($data_ar, $SP);
