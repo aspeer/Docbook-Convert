@@ -606,6 +606,19 @@ sub warning {    # synonym for caution, important, note, tip
 }
 
 
+sub xref {
+    my ($self, $data_ar)=@_;
+    my $attr_hr=$data_ar->[$ATTR_IX];
+    if (my $linkend=$attr_hr->{'linkend'}) {
+        #  Don't link at the moment
+        return $self->_italic($linkend);
+    }
+    else {
+        return undef;
+    }
+}
+
+
 sub _text_cleanup {
 
     my ($self, $text)=@_;
