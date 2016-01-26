@@ -280,7 +280,7 @@ sub _null {
 
 
 sub _sect {
-    my ($self, $data_ar, $count)=@_;
+    my ($self, $data_ar, $count, $h_level)=@_;
     my ($title, $subtitle)=
         $self->find_node_tag_text($data_ar, 'title|subtitle', $NULL);
     my $anchor;
@@ -290,7 +290,8 @@ sub _sect {
     }
     my $text=$self->find_node_text($data_ar, $CR2);
     my $tag=$data_ar->[$NODE_IX];
-    my ($h_level)=($tag=~/(\d+)$/) || 1;
+    $h_level ||= 1;
+    #my ($h_level)=($tag=~/(\d+)$/) || 1;
     $h_level="_h${h_level}";
     return join($CR2, grep {$_} $anchor, $self->$h_level("$count $title"), $text);
 }
@@ -512,7 +513,7 @@ sub sect1 {
         #  Not nested
         my $count_sect1=++$self->{'_sect1'};
         delete @{$self}{qw(_sect2 _sect3 _sect4)};
-        return $self->_sect($data_ar, $count_sect1);
+        return $self->_sect($data_ar, $count_sect1, 1);
     }
 }
 
@@ -523,7 +524,7 @@ sub sect2 {
     my $count_sect2=++$self->{'_sect2'};
     delete @{$self}{qw(_sect3 _sect4)};
     my $count="$count_sect1.$count_sect2";
-    return $self->_sect($data_ar, $count);
+    return $self->_sect($data_ar, $count, 2);
 }
 
 
@@ -534,7 +535,7 @@ sub sect3 {
     my $count_sect3=++$self->{'_sect3'};
     delete @{$self}{qw(_sect4)};
     my $count="$count_sect1.$count_sect2.$count_sect3";
-    return $self->_sect($data_ar, $count);
+    return $self->_sect($data_ar, $count, 3);
 }
 
 
@@ -545,7 +546,7 @@ sub sect4 {
     my $count_sect3=($self->{'_sect3'}+1);
     my $count_sect4=++$self->{'_sect4'};
     my $count="$count_sect1.$count_sect2.$count_sect3.$count_sect4";
-    return $self->_sect($data_ar, $count);
+    return $self->_sect($data_ar, $count, 4);
 }
 
 

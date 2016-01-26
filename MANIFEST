@@ -34,6 +34,9 @@ t/code.xml
 t/command.md
 t/command.pod
 t/command.xml
+t/heading.md
+t/heading.pod
+t/heading.xml
 t/images5.md
 t/images5.pod
 t/images5.xml
@@ -65,6 +68,9 @@ t/refentry.xml
 t/screen.md
 t/screen.pod
 t/screen.xml
+t/section.md
+t/section.pod
+t/section.xml
 t/text.md
 t/text.pod
 t/text.xml

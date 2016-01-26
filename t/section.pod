@@ -1,0 +1,43 @@
+=pod
+
+=head1 1 Nested Sections
+
+Section 1
+
+=head2 1.1 Section 1.1
+
+Para 1.1
+
+=head3 1.1.1 Section 1.1.1
+
+Para 1.1.1
+
+=head3 1.1.2 Section 1.1.2
+
+Para 1.1.2
+
+=head1 2 Section 2
+
+Para 2
+
+=head2 2.1 Section 2.1
+
+Para 2.1
+
+=head3 2.1.1 Section 2.1.1
+
+Para 2.1.1
+
+=head2 2.2 Section 2.2
+
+Para 2.2
+
+=head3 2.2.1 Section 2.2.1
+
+Para 2.2.1
+
+=head1 3 Section 3
+
+Para 3
+
+=cut
