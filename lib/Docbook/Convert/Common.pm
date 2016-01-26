@@ -357,11 +357,15 @@ sub link {
     if ($attr_hr->{'xlink:href'}) {
         $url=$attr_hr->{'xlink:href'};
     }
+    elsif ($attr_hr->{'xl:href'}) {
+        $url=$attr_hr->{'xl:href'};
+    }
     elsif (my $linkend=$attr_hr->{'linkend'}) {
         $url="#${linkend}";
     }
     my $title=$attr_hr->{'annotations'};
     my $text=$self->find_node_text($data_ar, $NULL);
+    $text ||= $url;
     return $self->_link($url, $text, $title);
 }
 
@@ -606,7 +610,7 @@ sub warning {    # synonym for caution, important, note, tip
 }
 
 
-sub xref {
+sub xref0 {
     my ($self, $data_ar)=@_;
     my $attr_hr=$data_ar->[$ATTR_IX];
     if (my $linkend=$attr_hr->{'linkend'}) {
