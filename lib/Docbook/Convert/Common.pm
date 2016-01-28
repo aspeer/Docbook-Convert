@@ -420,6 +420,64 @@ sub para {
 
 }
 
+sub thead {
+
+    my ($self, $data_ar)=@_;
+    my @row;
+    foreach my $row_ar (@{$self->find_node($data_ar, 'row')}) {
+        foreach my $entry_ar (@{$self->find_node($row_ar, 'entry')}) {
+            #print "thead entry_ar: $entry_ar\n";
+            my $text=$self->find_node_text($entry_ar, $NULL);
+            push @row, $self->_bold($text);
+        }
+        $self->{'_table'}{'thead'}=\@row;
+        last;
+    }
+    return undef;
+
+}
+
+sub tbody {
+
+    my ($self, $data_ar)=@_;
+    foreach my $row_ar (@{$self->find_node($data_ar, 'row')}) {
+        my @row;
+        foreach my $entry_ar (@{$self->find_node($row_ar, 'entry')}) {
+            #print "tbody entry_ar: $entry_ar\n";
+            my $text=$self->find_node_text($entry_ar, $NULL);
+            push @row, $text;
+        }
+        push @{$self->{'_table'}{'tbody'}},\@row;
+    }
+    #print "tbody done\n";
+    return undef;
+
+}
+
+sub table {
+
+    my ($self, $data_ar)=@_;
+    #print "in table\n";
+    my $thead_ar=$self->{'_table'}{'thead'};
+    use Text::Table;
+    my $table_or=Text::Table->new((map {\"|", $_} @{$thead_ar}), \"|");
+    #print "new $table_or\n";
+    my $tbody_ar=$self->{'_table'}{'tbody'};
+    foreach my $row_ar (@{$tbody_ar}) {
+        #print "table row $row_ar\n";
+        $table_or->load($row_ar);
+    }
+    #print "table done\n";
+    #print $table_or;
+    #print $self->_code($table_or->stringify());
+    my $table=$table_or->stringify();
+    my @table=($table=~/^(.*)$/gm);
+    return $CR2 . join($CR, map {"${SP4}$_"} @table) . $CR2;
+    
+    return $self->_code($table_or->stringify());
+    #die;
+    
+}
 
 sub procedure {
 
@@ -469,7 +527,7 @@ sub question {
 
     my ($self, $data_ar)=@_;
     my $text=$self->find_node_text($data_ar, $CR2);
-    return $self->_bold('Q: ').$text;
+    return $self->_bold('Q:').$SP.$text;
 
 }
 
@@ -477,7 +535,7 @@ sub answer {
 
     my ($self, $data_ar)=@_;
     my $text=$self->find_node_text($data_ar, $CR2);
-    return $self->_bold('A: ').$text;
+    return $self->_bold('A:').$SP.$text;
 
 }
     

@@ -21,7 +21,7 @@ package Docbook::Convert;
 use strict qw(vars);
 use vars qw($VERSION $AUTOLOAD);
 use warnings;
-no warnings qw(uninitialized);
+no warnings qw(uninitialized utf8);
 sub BEGIN {local $^W=0}
 
 
@@ -124,8 +124,11 @@ sub parse {
         }
         else {
 
-            # Yes - store as text node
+            # Yes - store as text node. If para cleanup leading whitespace
             my $text=$elt_child_or->text();
+            if ($tag eq 'para') {
+                $text=&whitespace_clean($text);
+            }
             my $data_child_ar=
                 $self->data_ar('text', [$text], undef, undef, undef, $data_ar);
             push @{$data_ar->[$CHLD_IX]}, $data_child_ar;

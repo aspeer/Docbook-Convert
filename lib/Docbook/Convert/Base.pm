@@ -194,6 +194,7 @@ sub find_node_tag_text_recurse {
     #  Do the recursive searching for all text and push into array
     #
     my ($self, $data_ar, $tag, $text_ar, $tag_found)=@_;
+    #print "find $data_ar", Dumper([[caller()]->[0..2]]), "\n";;
     if ((my $node_tag=$data_ar->[$NODE_IX]) eq $tag) {
 
         #  Only return first hit. If already text in array just

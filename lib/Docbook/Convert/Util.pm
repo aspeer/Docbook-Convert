@@ -38,7 +38,7 @@ use Carp;
 #  Export functions
 #
 @ISA=qw(Exporter);
-@EXPORT=qw(err msg dump_ar);
+@EXPORT=qw(err msg dump_ar whitespace_clean);
 
 
 #  Version information in a format suitable for CPAN etc. Must be
@@ -80,6 +80,27 @@ sub dump_ar {
 
 }
 
+
+sub whitespace_clean {
+    
+    my $text=shift();
+    $text=~s/^\t//gm;
+    my @para;
+    my @text=($text=~/^(.*)$/gm);
+    foreach my $line (@text) {
+        if ($line=~/^\s+\S+/) {
+            $line=~s/^\s+//;
+        }
+        elsif ($line=~/^\s*$/) {
+            next;
+        }
+        push @para, $line
+    }
+    my $para=join($CR, @para);
+    return $para;
+
+}
+    
 
 sub err {
 

@@ -2,7 +2,7 @@
 #
 use strict;
 no strict qw(refs);
-no warnings qw(uninitialized redefine);
+no warnings qw(uninitialized redefine utf8);
 
 #  Load
 #
