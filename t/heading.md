@@ -1,6 +1,6 @@
 # 1 Headings #
 
- Para Level 1
+Para Level 1
 
 ## 1.1 Heading Level 2 ##
 

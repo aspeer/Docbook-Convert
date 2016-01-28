@@ -2,7 +2,7 @@
 
 =head1 1 Headings
 
- Para Level 1
+Para Level 1
 
 =head2 1.1 Heading Level 2
 
