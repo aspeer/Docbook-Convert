@@ -290,6 +290,18 @@ sub render_recurse {
     my ($self, $data_ar, $render_or)=@_;
 
 
+    #  Get tag name
+    #
+    my $tag=$data_ar->[$NODE_IX];
+    
+    
+    #  Does this tag turn on plaintext ? E.g. if withing screen/programlisting/commmand in Markdown no
+    #  further markdown is needed
+    #
+    $render_or->{'_plaintext'}++ if
+        $render_or->_plaintext($tag);
+
+
     #  Render any children
     #
     if ($data_ar->[$CHLD_IX]) {
@@ -301,11 +313,16 @@ sub render_recurse {
             }
         }
     }
-
-
-    #  Now render tag
+    
+    
+    #  Clear plaintext
     #
-    my $tag=$data_ar->[$NODE_IX];
+    delete $render_or->{'_plaintext'} 
+        if $render_or->_plaintext($tag);
+
+    
+    #  Render this tag
+    #
     my $render=$render_or->$tag($data_ar);
 
 

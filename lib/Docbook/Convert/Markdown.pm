@@ -63,10 +63,31 @@ sub text {
 }
 
 
+sub warning0 {    # synonym for caution, important, note, tip
+    my ($self, $data_ar)=@_;
+    my $tag=$data_ar->[$NODE_IX];
+    my $text=$self->find_node_text($data_ar, $NULL);
+    $tag=lc($tag);
+    my $admonition=$self->_bold($ADMONITION_TEXT_HR->{$tag});
+    return $CR2 . $self->_blockquote("$admonition: $text");
+}
+
+
+sub _plaintext {
+
+    my ($self, $tag)=@_;
+    return $MD_PLAINTEXT_HR->{$tag}
+    
+}
+    
+
 sub _dont_escape {
 
     my ($self, $data_ar)=@_;
     if ($self->find_parent($data_ar, $MD_DONT_ESCAPE_AR)) {
+        return 1;
+    }
+    elsif ($self->{'_plaintext'}) {
         return 1;
     }
     else {

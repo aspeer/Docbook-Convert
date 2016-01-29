@@ -53,6 +53,8 @@ sub new {    ## no subsort
         no_html                    => $NO_HTML,
         no_image_fetch             => $NO_IMAGE_FETCH,
         no_warn_unhandled          => $NO_WARN_UNHANDLED,
+        table_wrap_columns 	   => $TABLE_WRAP_COLUMNS,
+        table_wrap_huge		   => $TABLE_WRAP_HUGE,
         %{$param_hr}
     );
     return bless(\%self, ref($class) || $class);
@@ -278,6 +280,7 @@ sub load_imagemagick {
     #
     eval {
         require Image::Magick;
+        1;
     } || do {
         return err ("unable to load Image::Magic module, $@");
     };
@@ -287,6 +290,26 @@ sub load_imagemagick {
         return err ("unable to load LWP::Simple module, $@");
     };
 
+}
+
+
+sub text_wrap {
+
+    my ($self, $text)=@_;
+    eval {
+        require Text::Wrap;
+        1;
+    } || return err ("unable to load Text::Wrap module, $@");
+    $self->{'_wrap_init'} ||= do {
+        $Text::Wrap::column=$self->{'table_wrap_columns'};
+        $Text::Wrap::huge=$self->{'table_wrap_huge'};
+        1;
+    };
+    $text=~s/\R//g;
+    $text=~s/\t/ /g;
+    $text=Text::Wrap::wrap(undef, undef, $text);
+    return $text;
+    
 }
 
 

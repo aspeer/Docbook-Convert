@@ -106,6 +106,15 @@ my $constant_local_fn="${module_fn}.local";
             option
             )
     ],
+    
+    
+    #  Anything below these tags is plaintext - don't markup further
+    #
+    MD_PLAINTEXT_HR => { map {$_=>1 } qw(
+        table
+        screen
+        programlisting
+    )},
 
 
     #  Adminition Text
@@ -228,6 +237,12 @@ my $constant_local_fn="${module_fn}.local";
     #  Detailed backtrace ?
     #
     ERR_BACKTRACE => 0,
+    
+    
+    #  Table/Text wrap columns size (i.e. max col width of text in a single cell)
+    #
+    TABLE_WRAP_COLUMNS		=> 40,
+    TABLE_WRAP_HUGE		=> 'overflow',
 
 
     #  Local constants override anything above

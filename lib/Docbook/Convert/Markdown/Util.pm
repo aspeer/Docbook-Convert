@@ -61,7 +61,7 @@ sub _anchor_fix {
 
 sub _bold {
     my ($self, $text)=@_;
-    return "**$text**";
+    return $self->{'_plaintext'} ? $text : "**$text**";
 }
 
 
@@ -69,37 +69,37 @@ sub _code {
     my ($self, $text)=@_;
     $text=~s/\`//g;
     $text=~s/\s+\Q<**SBR**>\E\s+/`  $CR`/g;
-    return "`$text`";
+    return $self->{'_plaintext'} ? $text : "`$text`";
 }
 
 
 sub _email {
     my ($self, $email)=@_;
-    return "<$email>";
+    return $self->{'_plaintext'} ? $email : "<$email>";
 }
 
 
 sub _h1 {
     my ($self, $text)=@_;
-    return "# $text #";
+    return $self->{'_plaintext'} ? $text : "# $text #";
 }
 
 
 sub _h2 {
     my ($self, $text)=@_;
-    return "## $text ##";
+    return $self->{'_plaintext'} ? $text : "## $text ##";
 }
 
 
 sub _h3 {
     my ($self, $text)=@_;
-    return "### $text ###";
+    return $self->{'_plaintext'} ? $text : "### $text ###";
 }
 
 
 sub _h4 {
     my ($self, $text)=@_;
-    return "#### $text ####";
+    return $self->{'_plaintext'} ? $text :  "#### $text ####";
 }
 
 
@@ -130,7 +130,7 @@ HERE
 
 sub _italic {
     my ($self, $text)=@_;
-    return "*$text*";
+    return $self->{'_plaintext'} ? $text :  "*$text*";
 }
 
 
@@ -138,7 +138,10 @@ sub _link {
     my ($self, $url, $text, $title)=@_;
 
     #print "url $url\n";
-    if ($title) {
+    if ($self->{'_plaintext'}) {
+        return $url
+    }
+    elsif ($title) {
         return "[$text]($url \"$title\")";
     }
     else {
@@ -182,7 +185,7 @@ sub _prefix {
 
 sub _strikethrough {
     my ($self, $text)=@_;
-    return "~~$text~~";
+    return $self->{'_plaintext'} ? $text : "~~$text~~";
 }
 
 

@@ -428,6 +428,7 @@ sub thead {
         foreach my $entry_ar (@{$self->find_node($row_ar, 'entry')}) {
             #print "thead entry_ar: $entry_ar\n";
             my $text=$self->find_node_text($entry_ar, $NULL);
+            $text=$self->text_wrap($text);
             push @row, $self->_bold($text);
         }
         $self->{'_table'}{'thead'}=\@row;
@@ -445,9 +446,11 @@ sub tbody {
         foreach my $entry_ar (@{$self->find_node($row_ar, 'entry')}) {
             #print "tbody entry_ar: $entry_ar\n";
             my $text=$self->find_node_text($entry_ar, $NULL);
+            $text=$self->text_wrap($text);
             push @row, $text;
         }
         push @{$self->{'_table'}{'tbody'}},\@row;
+        #push @{$self->{'_table'}{'tbody'}},[map { undef } @row]
     }
     #print "tbody done\n";
     return undef;
@@ -460,21 +463,35 @@ sub table {
     #print "in table\n";
     my $thead_ar=$self->{'_table'}{'thead'};
     use Text::Table;
-    my $table_or=Text::Table->new((map {\"|", $_} @{$thead_ar}), \"|");
+    #my $table_or=Text::Table->new((map {\"|", $_} @{$thead_ar}), \"|");
+    my $table_or=Text::Table->new((map {\'|', $_} @{$thead_ar}), \'|');
+
+    
     #print "new $table_or\n";
     my $tbody_ar=$self->{'_table'}{'tbody'};
     foreach my $row_ar (@{$tbody_ar}) {
         #print "table row $row_ar\n";
         $table_or->load($row_ar);
     }
+
+    my @table;
+    push @table, $table_or->rule('-', '-');
+    push @table, $table_or->title;
+    push @table, $table_or->rule('-', '-');
+    my @row=$table_or->table();
+    foreach my $row (1..$#row) {
+        push @table, $row[$row];
+        #push @table, $table_or->body_rule(' ', ' ') unless ($_ == $#row);
+    }
+    push @table, $table_or->body_rule('-','-');
     #print "table done\n";
     #print $table_or;
     #print $self->_code($table_or->stringify());
-    my $table=$table_or->stringify();
-    my @table=($table=~/^(.*)$/gm);
-    return $CR2 . join($CR, map {"${SP4}$_"} @table) . $CR2;
+    #my $table=$table_or->stringify();
+    #my @table=($table=~/^(.*)$/gm);
+    return $CR2 . join(undef, map {"${SP4}$_"} @table) . $CR2;
     
-    return $self->_code($table_or->stringify());
+    #return $self->_code($table_or->stringify());
     #die;
     
 }
@@ -519,7 +536,7 @@ sub qandadiv {
     my ($self, $data_ar)=@_;
     my $title=$self->find_node_tag_text($data_ar, 'title', $NULL);
     my $text=$self->find_node_text($data_ar, $CR2);
-    return join($CR2, $self->_bold($title), $text);
+    return join($CR2, $self->_h2($title), $text);
 
 }    
 
@@ -726,6 +743,12 @@ sub warning {    # synonym for caution, important, note, tip
     return $CR2 . "$admonition: $text";
 }
 
+sub footnote {
+    my ($self, $data_ar)=@_;
+    my $text=$self->find_node_text($data_ar, $NULL);
+    push @{$self->{'footnote'}}, $text;
+    return undef;
+}
 
 sub xref0 {
     my ($self, $data_ar)=@_;
