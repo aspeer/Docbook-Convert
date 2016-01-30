@@ -298,7 +298,8 @@ sub _sect {
     my ($title, $subtitle)=
         $self->find_node_tag_text($data_ar, 'title|subtitle', $NULL);
     my $anchor;
-    if ($data_ar->[$ATTR_IX] && (my $id=$data_ar->[$ATTR_IX]{'id'})) {
+    my $attr_hr=$data_ar->[$ATTR_IX];
+    if (my $id=$attr_hr->{'id'} || $attr_hr->{'xml:id'}) {
         $anchor=$self->_anchor($id) unless $NO_HTML;
         $self->{'_id'}{$id}=$title;
     }

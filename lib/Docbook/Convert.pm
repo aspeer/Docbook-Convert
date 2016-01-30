@@ -295,6 +295,16 @@ sub render_recurse {
     my $tag=$data_ar->[$NODE_IX];
     
     
+    #  Get attributes and look for anchor. TODO allow anchor on any tag, not just sections
+    #
+    #my $attr_hr=$data_ar->[$ATTR_IX];
+    #if (my $id=$attr_hr->{'id'} || $attr_hr->{'xml:id'}) {
+    #    $anchor=$self->_anchor($id) unless $NO_HTML;
+    #    $render_or->{'_id'}{$id}=$title;
+    #}
+    
+    
+    
     #  Does this tag turn on plaintext ? E.g. if withing screen/programlisting/commmand in Markdown no
     #  further markdown is needed
     #

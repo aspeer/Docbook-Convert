@@ -96,7 +96,8 @@ sub whitespace_clean {
         }
         push @para, $line
     }
-    my $para=join($CR, @para);
+    #my $para=join($CR, @para);
+    my $para=join($SP, @para, $SP);
     return $para;
 
 }
