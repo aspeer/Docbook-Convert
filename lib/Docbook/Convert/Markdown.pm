@@ -63,13 +63,14 @@ sub text {
 }
 
 
-sub warning0 {    # synonym for caution, important, note, tip
+sub warning {    # synonym for caution, important, note, tip
     my ($self, $data_ar)=@_;
     my $tag=$data_ar->[$NODE_IX];
     my $text=$self->find_node_text($data_ar, $NULL);
     $tag=lc($tag);
     my $admonition=$self->_bold($ADMONITION_TEXT_HR->{$tag});
-    return $CR2 . $self->_blockquote("$admonition: $text");
+    #return $CR2 . $admonition. $CR2 . $text;
+    return $CR2 . $self->_quote($admonition. $CR2 . $text);
 }
 
 

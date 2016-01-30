@@ -103,6 +103,19 @@ sub _h4 {
 }
 
 
+sub _quote {
+    my ($self, $text)=@_;
+    my $quote;
+    my @line=($text=~/^(.*)$/gm);
+    foreach my $line (@line) {
+        chomp($line);
+        $quote.="> ${line}${CR}";
+    }
+    $quote.=">${CR}";
+    return $quote;
+}
+    
+
 sub _image {
     my ($self, $url, $alt_text, $title, $attr_hr)=@_;
     if ((my $width=$attr_hr->{'width'}) && !$NO_HTML) {

@@ -89,7 +89,7 @@ sub whitespace_clean {
     my @text=($text=~/^(.*)$/gm);
     foreach my $line (@text) {
         if ($line=~/^\s+\S+/) {
-            $line=~s/^\s+//;
+            $line=~s/^\s+/ /;
         }
         elsif ($line=~/^\s*$/) {
             next;
