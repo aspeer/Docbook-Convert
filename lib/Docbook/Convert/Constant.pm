@@ -95,7 +95,8 @@ my $constant_local_fn="${module_fn}.local";
 
     #  Don't escape the following Docbook tags in Markdown converter
     #
-    MD_DONT_ESCAPE_AR => [qw(
+    MD_DONT_ESCAPE_AR => [],
+    MD0_DONT_ESCAPE_AR => [qw(
             command
             screen
             arg
@@ -111,6 +112,11 @@ my $constant_local_fn="${module_fn}.local";
     #  Anything below these tags is plaintext - don't markup further
     #
     MD_PLAINTEXT_HR => { map {$_=>1 } qw(
+        table
+        screen
+        programlisting
+    )},
+    POD_PLAINTEXT_HR => { map {$_=>1 } qw(
         table
         screen
         programlisting
@@ -165,7 +171,7 @@ my $constant_local_fn="${module_fn}.local";
 
         #figure     => [qw(screenshot)],
         article => [qw(refentry)],
-        _text   => [qw(literallayout orgname firstname surname)],
+        _text   => [qw(literallayout orgname firstname surname example qandaentry)],
         _data   => [qw(imageobject)],
         _null   => [qw(refentryinfo articleinfo)],
         _meta   => [qw(author affiliation pubdate address copyright)]

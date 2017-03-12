@@ -224,7 +224,7 @@ sub find_node_tag_text_recurse {
         }
     }
     if ($tag_found) {
-        delete $data_ar->[$CHLD_IX];
+        #delete $data_ar->[$CHLD_IX];
     }
     return $text_ar;
 }
@@ -318,7 +318,9 @@ sub AUTOLOAD {
     #  Catch tags we are not rendering yet - output them as text only
     #
     my ($self, $data_ar)=@_;
-    my ($tag)=($AUTOLOAD=~/::(\w+)$/);
+    unless (ref($data_ar)) {
+        warn "unhandled internal method $AUTOLOAD, $data_ar\n"
+    }
     $self->{'_autoload'}{$data_ar}=$data_ar;
     return $data_ar;
 }

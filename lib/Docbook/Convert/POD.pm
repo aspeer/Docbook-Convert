@@ -65,6 +65,15 @@ sub text {
 }
 
 
+sub _plaintext {
+
+    my ($self, $tag)=@_;
+    return $POD_PLAINTEXT_HR->{$tag}
+    
+}
+
+
+
 1;
 
 __END__

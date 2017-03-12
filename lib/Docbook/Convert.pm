@@ -126,9 +126,9 @@ sub parse {
 
             # Yes - store as text node. If para cleanup leading whitespace
             my $text=$elt_child_or->text();
-            if ($tag eq 'para') {
-                $text=&whitespace_clean($text);
-            }
+            #if ($tag eq 'para') {
+            #    $text=&whitespace_clean($text);
+            #}
             my $data_child_ar=
                 $self->data_ar('text', [$text], undef, undef, undef, $data_ar);
             push @{$data_ar->[$CHLD_IX]}, $data_child_ar;
@@ -294,15 +294,16 @@ sub render_recurse {
     #
     my $tag=$data_ar->[$NODE_IX];
     
-    
-    #  Get attributes and look for anchor. TODO allow anchor on any tag, not just sections
+
+    #  Get attributes and look for anchor
     #
-    #my $attr_hr=$data_ar->[$ATTR_IX];
-    #if (my $id=$attr_hr->{'id'} || $attr_hr->{'xml:id'}) {
-    #    $anchor=$self->_anchor($id) unless $NO_HTML;
-    #    $render_or->{'_id'}{$id}=$title;
-    #}
-    
+    my $anchor_id;
+    my $attr_hr=$data_ar->[$ATTR_IX];
+    if ($anchor_id=($attr_hr->{'id'} || $attr_hr->{'xml:id'})) {
+        my ($title, $subtitle)=
+            $render_or->find_node_tag_text($data_ar, 'title|subtitle', $NULL);
+        $render_or->{'_id'}{$anchor_id}=($title || $subtitle);
+    }
     
     
     #  Does this tag turn on plaintext ? E.g. if withing screen/programlisting/commmand in Markdown no
@@ -335,6 +336,21 @@ sub render_recurse {
     #
     my $render=$render_or->$tag($data_ar);
 
+
+    #  Create anchor if needed
+    #
+    if ($anchor_id) {
+        my $anchor=($render_or->_anchor($anchor_id) . $CR2) unless $NO_HTML;
+        if (ref($render)) {
+            unless($self->{'no_warn_unhandled'}) {
+                warn("warning - unable to add anchor #${anchor_id} for unhandled tag: $tag\n");
+            }
+        }
+        else {
+            $render=join($CR2, $anchor, $render) unless ref($render);
+        }
+    }
+    
 
     #  Done
     #

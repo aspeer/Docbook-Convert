@@ -20,7 +20,7 @@ package Docbook::Convert::Common;
 #  Pragma
 #
 use strict qw(vars);
-use vars qw($VERSION $AUTOLOAD);
+use vars qw($VERSION);
 use warnings;
 no warnings qw(uninitialized);
 
@@ -297,18 +297,19 @@ sub _sect {
     my ($self, $data_ar, $count, $h_level)=@_;
     my ($title, $subtitle)=
         $self->find_node_tag_text($data_ar, 'title|subtitle', $NULL);
-    my $anchor;
-    my $attr_hr=$data_ar->[$ATTR_IX];
-    if (my $id=$attr_hr->{'id'} || $attr_hr->{'xml:id'}) {
-        $anchor=$self->_anchor($id) unless $NO_HTML;
-        $self->{'_id'}{$id}=$title;
-    }
+    #my $anchor;
+    #my $attr_hr=$data_ar->[$ATTR_IX];
+    #if (my $id=$attr_hr->{'id'} || $attr_hr->{'xml:id'}) {
+    #    $anchor=$self->_anchor($id) unless $NO_HTML;
+    #    $self->{'_id'}{$id}=$title;
+    #}
     my $text=$self->find_node_text($data_ar, $CR2);
     my $tag=$data_ar->[$NODE_IX];
     $h_level ||= 1;
     #my ($h_level)=($tag=~/(\d+)$/) || 1;
     $h_level="_h${h_level}";
-    return join($CR2, grep {$_} $anchor, $self->$h_level("$count $title"), $text);
+    #return join($CR2, grep {$_} $anchor, $self->$h_level("$count $title"), $text);
+    return join($CR2, grep {$_} $self->$h_level("$count $title"), $text);
 }
 
 

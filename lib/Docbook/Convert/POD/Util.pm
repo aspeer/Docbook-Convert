@@ -41,7 +41,19 @@ $VERSION='0.006';
 
 
 sub _anchor {
-    return undef;
+    #return undef;
+    my ($self, $id, $title)=@_;
+    $title=~s/\s+/-/g;
+    my $html=<<HERE;
+=begin HTML
+
+<a name="$title"/></a>
+
+=end HTML
+HERE
+    #print "h $html\n";
+    return $html;
+
 }
 
 
@@ -51,7 +63,8 @@ sub _anchor_fix {
     #
     my ($self, $output, $id_hr)=@_;
     while (my ($id, $title)=each %{$self->{'_id'}}) {
-        $title=~s/\W+/-/g;
+        $title=~s/\s+/-/g;
+        #print "id $id, title: $title\n";
         $output=~s/L\<(.*?)\|#\Q$id\E/L\<$1|\"$title\"/g;
     }
     return $output;
@@ -61,7 +74,8 @@ sub _anchor_fix {
 
 sub _bold {
     my ($self, $text)=@_;
-    return "B<<< $text >>>";
+    return unless $text;
+    return $self->{'_plaintext'} ? $text : "B<<< $text >>>";
 }
 
 
@@ -70,13 +84,13 @@ sub _code {
     $text=~s/C<<<<\s+//g;
     $text=~s/\s+>>>>//g;
     $text=~s/\s+\Q<**SBR**>\E\s+/ >>>>${CR2}C<<<< /g;
-    return "C<<<< $text >>>>";
+    return $self->{'_plaintext'} ? $text : "C<<<< $text >>>>";
 }
 
 
 sub _email {
     my ($self, $email)=@_;
-    return "<$email>";
+    return $self->{'_plaintext'} ? $email : "<$email>";
 }
 
 
@@ -128,7 +142,7 @@ HERE
 
 sub _italic {
     my ($self, $text)=@_;
-    return "I<<< $text >>>";
+    return $self->{'_plaintext'} ? $text : "I<<< $text >>>";
 }
 
 
