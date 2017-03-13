@@ -28,6 +28,7 @@ no warnings qw(uninitialized);
 #  External modules
 #
 use Docbook::Convert::Constant;
+use Docbook::Convert::Util;
 use Data::Dumper;
 
 
@@ -64,8 +65,8 @@ sub _image_build {
 
 
     #  Get alt text, title, URL etc/
-    my $alt_text1=$self->find_node_tag_text($data_ar, 'alt', $NULL);
-    my $title=$self->find_node_tag_text($data_ar, 'title|caption|screeninfo', $NULL);
+    my $alt_text1=$self->pull_node_tag_text($data_ar, 'alt', $NULL);
+    my $title=$self->pull_node_tag_text($data_ar, 'title|caption|screeninfo', $NULL);
     my $image_data_ar=$self->find_node($data_ar, 'imagedata');
     my $image_data_attr_hr=$image_data_ar->[0][$ATTR_IX];
     my $alt_text2=$image_data_attr_hr->{'annotations'};
@@ -96,7 +97,7 @@ sub _image_build {
 
 sub _meta {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $SP);
+    my $text=$self->pull_node_text($data_ar, $SP);
     my $key=$data_ar->[$NODE_IX];
     $self->{'_meta'}{$key}=$text;
     return undef;
@@ -120,8 +121,8 @@ sub appendix {
     $cr->($cr, $app_ix);
     my $label=join(undef, @label);
     my ($title, $subtitle)=
-        $self->find_node_tag_text($data_ar, 'title|subtitle', $NULL);
-    my $text=$self->find_node_text($data_ar, $CR2);
+        $self->pull_node_tag_text($data_ar, 'title|subtitle', $NULL);
+    my $text=$self->pull_node_text($data_ar, $CR2);
     my $appendix=$self->_h1("Appendix $label: $title");
     return join($CR2, $appendix, $text);
 
@@ -129,10 +130,10 @@ sub appendix {
 
 
 sub arg {
-    my ($self, $data_ar)=@_;
 
-    #my $text=$self->find_node_text($data_ar, $SP);
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my ($self, $data_ar)=@_;
+    #my $text=$self->pull_node_text($data_ar, $SP);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     my $attr_hr=$data_ar->[$ATTR_IX] && $data_ar->[$ATTR_IX];
     if ((my $choice=$attr_hr->{'choice'}) eq 'req') {
         $text="{$text}";
@@ -159,7 +160,7 @@ sub article {
 
     #  Rendering an article. Get article body
     #
-    my @text=@{$self->find_node_text($data_ar)};
+    my @text=@{$self->pull_node_text($data_ar)};
 
 
     #  Title
@@ -232,7 +233,7 @@ sub article {
 
 sub blockquote {
     my ($self, $data_ar)=@_;
-    my @text=@{$self->find_node_text($data_ar)};
+    my @text=@{$self->pull_node_text($data_ar)};
     my $text;
     foreach my $line (@text) {
         my @line=($line=~/^(.*)$/gm);
@@ -248,14 +249,14 @@ sub blockquote {
 
 sub citetitle {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     return $self->_italic($text);
 }
 
 
 sub cmdsynopsis {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $SP);
+    my $text=$self->pull_node_text($data_ar, $SP);
     return $self->_code($text);
 }
 
@@ -267,7 +268,7 @@ sub command {
         return $data_ar;
     }
     else {
-        my $text=$self->find_node_text($data_ar, $NULL);
+        my $text=$self->pull_node_text($data_ar, $NULL);
         return $self->_code($text);
     }
 }
@@ -275,14 +276,14 @@ sub command {
 
 sub code {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     return $self->_code($text);
 }
 
 
 sub email {
     my ($self, $data_ar)=@_;
-    my $email=$self->find_node_text($data_ar, $NULL);
+    my $email=$self->pull_node_text($data_ar, $NULL);
     return $self->_email($email);
 }
 
@@ -296,26 +297,21 @@ sub _null {
 sub _sect {
     my ($self, $data_ar, $count, $h_level)=@_;
     my ($title, $subtitle)=
-        $self->find_node_tag_text($data_ar, 'title|subtitle', $NULL);
-    #my $anchor;
-    #my $attr_hr=$data_ar->[$ATTR_IX];
-    #if (my $id=$attr_hr->{'id'} || $attr_hr->{'xml:id'}) {
-    #    $anchor=$self->_anchor($id) unless $NO_HTML;
-    #    $self->{'_id'}{$id}=$title;
-    #}
-    my $text=$self->find_node_text($data_ar, $CR2);
+        $self->pull_node_tag_text($data_ar, 'title|subtitle', $NULL);
+    debug("title: $title, subtitle: $subtitle");
+    my $text=$self->pull_node_text($data_ar, $CR2);
+    debug("text $text");
     my $tag=$data_ar->[$NODE_IX];
     $h_level ||= 1;
     #my ($h_level)=($tag=~/(\d+)$/) || 1;
     $h_level="_h${h_level}";
-    #return join($CR2, grep {$_} $anchor, $self->$h_level("$count $title"), $text);
     return join($CR2, grep {$_} $self->$h_level("$count $title"), $text);
 }
 
 
 sub emphasis {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     my $attr_hr=$data_ar->[$ATTR_IX];
     my $role=$attr_hr->{'role'};
     if (($role eq 'bold') || ($role eq 'strong')) {
@@ -339,7 +335,7 @@ sub figure {
 sub group {
 
     my ($self, $data_ar)=@_;
-    my ($text_ar)=$self->find_node_text($data_ar);
+    my ($text_ar)=$self->pull_node_text($data_ar);
     my $text=join(' | ', @{$text_ar});
     $text="[ $text ]" if (@{$text_ar} > 1);
     return $text;
@@ -350,7 +346,7 @@ sub group {
 sub itemizedlist {
     my ($self, $data_ar)=@_;
     my @list;
-    foreach my $text (@{$self->find_node_text($data_ar)}) {
+    foreach my $text (@{$self->pull_node_text($data_ar)}) {
         push @list, $self->_list_item("* $text");
     }
 
@@ -373,7 +369,7 @@ sub link {
         $url="#${linkend}";
     }
     my $title=$attr_hr->{'annotations'};
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     $text ||= $url;
     return $self->_link($url, $text, $title);
 }
@@ -381,7 +377,7 @@ sub link {
 
 sub listitem {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $self->_listitem_join());
+    my $text=$self->pull_node_text($data_ar, $self->_listitem_join());
     return $text;
 }
 
@@ -404,7 +400,7 @@ sub mediaobject {
 sub orderedlist {
     my ($self, $data_ar)=@_;
     my (@list, $count);
-    foreach my $text (@{$self->find_node_text($data_ar)}) {
+    foreach my $text (@{$self->pull_node_text($data_ar)}) {
         $count++;
         push @list, $self->_list_item("$count. $text");
     }
@@ -417,7 +413,7 @@ sub orderedlist {
 sub para {
 
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     return $text;
 
 }
@@ -429,7 +425,7 @@ sub thead {
     foreach my $row_ar (@{$self->find_node($data_ar, 'row')}) {
         foreach my $entry_ar (@{$self->find_node($row_ar, 'entry')}) {
             #print "thead entry_ar: $entry_ar\n";
-            my $text=$self->find_node_text($entry_ar, $NULL);
+            my $text=$self->pull_node_text($entry_ar, $NULL);
             $text=$self->text_wrap($text);
             push @row, $self->_bold($text);
         }
@@ -447,7 +443,7 @@ sub tbody {
         my @row;
         foreach my $entry_ar (@{$self->find_node($row_ar, 'entry')}) {
             #print "tbody entry_ar: $entry_ar\n";
-            my $text=$self->find_node_text($entry_ar, $NULL);
+            my $text=$self->pull_node_text($entry_ar, $NULL);
             $text=$self->text_wrap($text);
             push @row, $text;
         }
@@ -501,12 +497,12 @@ sub table {
 sub procedure {
 
     my ($self, $data_ar)=@_;
-    my $title=$self->find_node_tag_text($data_ar, 'title', $NULL);
+    my $title=$self->pull_node_tag_text($data_ar, 'title', $NULL);
     my @step;
     my $count;
     foreach my $ar (@{$self->find_node($data_ar, 'step')}) {
         $count++;
-        my $text=$self->find_node_text($ar, $NULL);
+        my $text=$self->pull_node_text($ar, $NULL);
         push @step, "${count}\\. ${text}";
     }
     return join($CR2, $self->_bold($title), @step);
@@ -518,7 +514,7 @@ sub programlisting {
     my ($self, $data_ar)=@_;
     my $attr_hr=$data_ar->[$ATTR_IX];
     my $lang=$attr_hr->{'language'};
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     $text="${CR2}```${lang}${CR}${text}${CR}```${CR2}";
     return $text
 }
@@ -527,7 +523,7 @@ sub programlisting {
 sub menuchoice {
 
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, ' > ');
+    my $text=$self->pull_node_text($data_ar, ' > ');
     return $self->_bold($text);
     
 }
@@ -536,8 +532,8 @@ sub menuchoice {
 sub qandadiv {
 
     my ($self, $data_ar)=@_;
-    my $title=$self->find_node_tag_text($data_ar, 'title', $NULL);
-    my $text=$self->find_node_text($data_ar, $CR2);
+    my $title=$self->pull_node_tag_text($data_ar, 'title', $NULL);
+    my $text=$self->pull_node_text($data_ar, $CR2);
     return join($CR2, $self->_h2($title), $text);
 
 }    
@@ -545,7 +541,7 @@ sub qandadiv {
 sub question {
 
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $CR2);
+    my $text=$self->pull_node_text($data_ar, $CR2);
     return $self->_bold('Q:').$SP.$text;
 
 }
@@ -553,7 +549,7 @@ sub question {
 sub answer {
 
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $CR2);
+    my $text=$self->pull_node_text($data_ar, $CR2);
     return $self->_bold('A:').$SP.$text;
 
 }
@@ -563,7 +559,7 @@ sub answer {
 sub quote {
 
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     return qq{\"$text\"};
 }
 
@@ -591,8 +587,8 @@ sub refnamediv {
 sub refsection {
     my ($self,  $data_ar)=@_;
     my ($title, $subtitle)=
-        $self->find_node_tag_text($data_ar, 'title|subtitle', $NULL);
-    my $text=$self->find_node_text($data_ar, $CR2);
+        $self->pull_node_tag_text($data_ar, 'title|subtitle', $NULL);
+    my $text=$self->pull_node_text($data_ar, $CR2);
     return join($CR2, $self->_h1($title), $text);
 }
 
@@ -600,8 +596,8 @@ sub refsection {
 sub refsynopsisdiv {
     my ($self, $data_ar)=@_;
 
-    #my $text=$self->find_node_text($data_ar, $NULL);
-    my $text=$self->find_node_text($data_ar, $CR2);
+    #my $text=$self->pull_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $CR2);
     my $heading=$REFENTRY_TEXT_HR->{'synopsis'};
     $text=$self->_h1($heading) . $CR2 . $text;
     return $text;
@@ -618,7 +614,7 @@ sub sbr {
 
 sub screen {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     my @text=($text=~/^(.*)$/gm);
     return $CR2 . join($CR, map {"${SP4}$_"} @text) . $CR2;
 }
@@ -690,7 +686,7 @@ sub sect4 {
 
 sub _text {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $CR2);
+    my $text=$self->pull_node_text($data_ar, $CR2);
 
     #  Clean up and extra blank lines
     $text=~s/^(\s*${CR}){2,}/${CR}/gm;
@@ -700,7 +696,7 @@ sub _text {
 
 sub term {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
 
     #return $self->_bold($self->_code($text));
     return $self->_bold($text);
@@ -711,14 +707,14 @@ sub ulink {
     my ($self, $data_ar)=@_;
     my $attr_hr=$data_ar->[$ATTR_IX];
     my $url=$attr_hr->{'url'};
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     return $self->_link($url, $text);
 }
 
 
 sub uri {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     return "<${text}>";
 }
 
@@ -727,7 +723,7 @@ sub variablelist {
     my ($self, $data_ar)=@_;
     my @list;
     foreach my $ar (@{$self->find_node($data_ar, 'varlistentry')}) {
-        my $text=$self->find_node_text($ar, $self->_variablelist_join());
+        my $text=$self->pull_node_text($ar, $self->_variablelist_join());
         push @list, $self->_list_item("* $text");
     }
 
@@ -739,7 +735,7 @@ sub variablelist {
 sub warning {    # synonym for caution, important, note, tip
     my ($self, $data_ar)=@_;
     my $tag=$data_ar->[$NODE_IX];
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     $tag=lc($tag);
     my $admonition=$self->_bold($ADMONITION_TEXT_HR->{$tag});
     return $CR2 . "$admonition: $text";
@@ -747,7 +743,7 @@ sub warning {    # synonym for caution, important, note, tip
 
 sub footnote {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     push @{$self->{'footnote'}}, $text;
     return undef;
 }

@@ -201,6 +201,7 @@ my $constant_local_fn="${module_fn}.local";
     NO_WARN_UNHANDLED => 0,
     XMLSUFFIX         => '.xml',
     VERBOSE           => 0,
+    DEBUG	      => 0,
 
 
     #  Constants that can be set via getopt
@@ -235,7 +236,9 @@ my $constant_local_fn="${module_fn}.local";
             'pod|pod',
             'merge',
             'no_warn_unhandled|silent|quiet|s|q',
-            'handler|h=s'
+            'handler|h=s',
+            'verbose',
+            'debug'
         )
     ],
 

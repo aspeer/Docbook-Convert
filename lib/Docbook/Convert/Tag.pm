@@ -58,7 +58,7 @@ $VERSION='0.006';
 
 sub command {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     return $self->_code($text);
 
     #return &_code();
@@ -68,7 +68,7 @@ sub command {
 sub para {
 
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     $text=~s/ +/ /g;
     return $text;
 

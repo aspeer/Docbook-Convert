@@ -84,12 +84,17 @@ sub getopt {
         print "$Script version: $VERSION\n";
         exit 0
     };
+    
+    
+    #  Turn on debug and verbosity if needed
+    #
+    ($VERBOSE, $DEBUG)=@opt{qw(verbose debug)};
 
 
     #  Debug
     #
     $opt{'dumpopt'} && do {
-        print Dumper([sort @{$GETOPT_AR}, @getopt_constant]);
+        CORE::print STDERR Dumper([sort @{$GETOPT_AR}, @getopt_constant]);
         exit 0;
     };
 

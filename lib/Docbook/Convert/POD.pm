@@ -53,14 +53,14 @@ $VERSION='0.006';
 
 sub replaceable {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     return $self->_italic($text);
 }
 
 
 sub text {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     return $text;
 }
 

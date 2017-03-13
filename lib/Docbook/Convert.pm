@@ -126,9 +126,9 @@ sub parse {
 
             # Yes - store as text node. If para cleanup leading whitespace
             my $text=$elt_child_or->text();
-            #if ($tag eq 'para') {
-            #    $text=&whitespace_clean($text);
-            #}
+            if ($tag eq 'para') {
+                $text=&whitespace_clean($text);
+            }
             my $data_child_ar=
                 $self->data_ar('text', [$text], undef, undef, undef, $data_ar);
             push @{$data_ar->[$CHLD_IX]}, $data_child_ar;
@@ -270,7 +270,8 @@ sub render {
         my @data_ar=sort {($a->[$NODE_IX] cmp $b->[$NODE_IX]) or ($a->[$LINE_IX] <=> $b->[$LINE_IX])} grep {$_} values(%{$hr});
         foreach my $data_ar (@data_ar) {
             my ($tag, $line_no, $col_no)=@{$data_ar}[$NODE_IX, $LINE_IX, $COLM_IX];
-            warn("warning - autotexted tag $tag at line $line_no, column $col_no\n");
+            warn("warning - autotexted tag '$tag' at line $line_no, column $col_no\n");
+            debug(Dumper($data_ar));
         }
     }
 
@@ -293,16 +294,18 @@ sub render_recurse {
     #  Get tag name
     #
     my $tag=$data_ar->[$NODE_IX];
+    debug("tag $tag");
     
 
     #  Get attributes and look for anchor
     #
-    my $anchor_id;
+    my ($anchor_id, $anchor_title);
     my $attr_hr=$data_ar->[$ATTR_IX];
     if ($anchor_id=($attr_hr->{'id'} || $attr_hr->{'xml:id'})) {
         my ($title, $subtitle)=
             $render_or->find_node_tag_text($data_ar, 'title|subtitle', $NULL);
-        $render_or->{'_id'}{$anchor_id}=($title || $subtitle);
+        $anchor_title=$title || $subtitle;
+        $render_or->{'_id'}{$anchor_id}=($anchor_title);
     }
     
     
@@ -311,6 +314,7 @@ sub render_recurse {
     #
     $render_or->{'_plaintext'}++ if
         $render_or->_plaintext($tag);
+    debug('plaintext %s', $render_or->{'_plaintext'});
 
 
     #  Render any children
@@ -335,12 +339,14 @@ sub render_recurse {
     #  Render this tag
     #
     my $render=$render_or->$tag($data_ar);
+    debug("$tag *$render*") unless ref($render);
 
 
     #  Create anchor if needed
     #
     if ($anchor_id) {
-        my $anchor=($render_or->_anchor($anchor_id) . $CR2) unless $NO_HTML;
+        my $anchor=($render_or->_anchor($anchor_id, $anchor_title) . $CR2) unless $NO_HTML;
+        debug("anchor: $anchor, render $render");
         if (ref($render)) {
             unless($self->{'no_warn_unhandled'}) {
                 warn("warning - unable to add anchor #${anchor_id} for unhandled tag: $tag\n");

@@ -108,6 +108,20 @@ sub find_node_recurse {
 }
 
 
+sub pull_node_tag_text {
+
+    #  Same as find_node_tag_text but destructive (pulls text out and collapses data_ar to remove text node)
+    #
+    my $self=shift();
+    #  Set flag so find_node_tag_text will destroy node after finding. Bit hacky.
+    $self->{'_pull_node_tag_text'}++;
+    my $text=$self->find_node_tag_text(@_);
+    delete $self->{'_pull_node_tag_text'};
+    return $text;
+    
+}
+
+
 sub find_node_tag_text {
 
     my ($self, $data_ar, $tag_ar, $join)=@_;
@@ -224,9 +238,19 @@ sub find_node_tag_text_recurse {
         }
     }
     if ($tag_found) {
-        #delete $data_ar->[$CHLD_IX];
+        delete $data_ar->[$CHLD_IX] if $self->{'_pull_node_tag_text'};
     }
     return $text_ar;
+}
+
+
+sub pull_node_text {
+
+    #  Same as find_node_text but destructive
+    my ($self, $data_ar, $join)=@_;
+    my $tag=$data_ar->[$NODE_IX];
+    return $self->pull_node_tag_text($data_ar, $tag, $join);
+
 }
 
 

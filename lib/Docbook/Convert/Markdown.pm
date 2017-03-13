@@ -55,7 +55,7 @@ $VERSION='0.006';
 
 sub text {
     my ($self, $data_ar)=@_;
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     unless ($self->_dont_escape($data_ar)) {
         $text=$self->_escape($text);
     }
@@ -66,7 +66,7 @@ sub text {
 sub warning {    # synonym for caution, important, note, tip
     my ($self, $data_ar)=@_;
     my $tag=$data_ar->[$NODE_IX];
-    my $text=$self->find_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $NULL);
     $tag=lc($tag);
     my $admonition=$self->_bold($ADMONITION_TEXT_HR->{$tag});
     #return $CR2 . $admonition. $CR2 . $text;

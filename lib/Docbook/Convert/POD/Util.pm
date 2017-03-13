@@ -41,7 +41,6 @@ $VERSION='0.006';
 
 
 sub _anchor {
-    #return undef;
     my ($self, $id, $title)=@_;
     $title=~s/\s+/-/g;
     my $html=<<HERE;
@@ -51,7 +50,6 @@ sub _anchor {
 
 =end HTML
 HERE
-    #print "h $html\n";
     return $html;
 
 }
@@ -64,7 +62,6 @@ sub _anchor_fix {
     my ($self, $output, $id_hr)=@_;
     while (my ($id, $title)=each %{$self->{'_id'}}) {
         $title=~s/\s+/-/g;
-        #print "id $id, title: $title\n";
         $output=~s/L\<(.*?)\|#\Q$id\E/L\<$1|\"$title\"/g;
     }
     return $output;

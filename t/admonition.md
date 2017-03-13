@@ -1,11 +1,26 @@
 # 1 Admonition #
 
-**NOTE**: This is a Note
+> **NOTE**
+> 
+> This is a Note
+>
 
-**TIP**: This is a Tip
+> **TIP**
+> 
+> This is a Tip
+>
 
-**WARNING**: This is a Warning
+> **WARNING**
+> 
+> This is a Warning
+>
 
-**CAUTION**: This is a Caution
+> **CAUTION**
+> 
+> This is a Caution
+>
 
-**IMPORTANT**: This is Important
+> **IMPORTANT**
+> 
+> This is Important
+>

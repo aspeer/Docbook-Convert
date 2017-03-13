@@ -38,7 +38,7 @@ use Carp;
 #  Export functions
 #
 @ISA=qw(Exporter);
-@EXPORT=qw(err msg dump_ar whitespace_clean);
+@EXPORT=qw(err msg debug dump_ar whitespace_clean);
 
 
 #  Version information in a format suitable for CPAN etc. Must be
@@ -98,7 +98,7 @@ sub whitespace_clean {
     }
     my $para=join($CR, @para);
     #my $para=join($SP, @para, $SP);
-    #$para=~s/\s{2,}/ /;
+    $para=~s/\s{2,}/ /;
     #$para=~s/^\s+//;
     #$para=~s/\s*$//;
     return $para;
@@ -143,3 +143,9 @@ sub msg {
     CORE::print &fmt(@_), "\n" if $VERBOSE;
 
 }
+
+
+sub debug {
+    CORE::print STDERR &fmt(@_), "\n" if $DEBUG;
+}
+
