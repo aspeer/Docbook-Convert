@@ -95,8 +95,7 @@ my $constant_local_fn="${module_fn}.local";
 
     #  Don't escape the following Docbook tags in Markdown converter
     #
-    MD_DONT_ESCAPE_AR => [],
-    MD0_DONT_ESCAPE_AR => [qw(
+    MD_DONT_ESCAPE_AR => [qw(
             command
             screen
             arg
