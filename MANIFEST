@@ -77,3 +77,6 @@ t/text.xml
 t/variablelist.md
 t/variablelist.pod
 t/variablelist.xml
+t/link4.xml
+t/link4.md
+t/link4.pod

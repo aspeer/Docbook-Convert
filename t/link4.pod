@@ -1,0 +1,17 @@
+=pod
+
+=head1 1 Section 1
+
+Text with L<link|"Section-2"> to section 2 inline
+
+=begin HTML
+
+<a name="Section-2"/></a>
+
+=end HTML
+
+=head1 2 Section 2
+
+This is text in Section 2
+
+=cut
