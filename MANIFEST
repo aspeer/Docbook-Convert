@@ -80,3 +80,7 @@ t/variablelist.xml
 t/link4.xml
 t/link4.md
 t/link4.pod
+t/entity.xml
+t/entity.md
+t/entity.pod
+
