@@ -172,7 +172,7 @@ my $constant_local_fn="${module_fn}.local";
         article => [qw(refentry)],
         _text   => [qw(literallayout orgname firstname surname example qandaentry)],
         _data   => [qw(imageobject)],
-        _null   => [qw(refentryinfo articleinfo)],
+        _null   => [qw(refentryinfo articleinfo tgroup)],
         _meta   => [qw(author affiliation pubdate address copyright)]
     },
 

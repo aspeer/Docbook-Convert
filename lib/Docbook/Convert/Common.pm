@@ -444,7 +444,6 @@ sub tbody {
     foreach my $row_ar (@{$self->find_node($data_ar, 'row')}) {
         my @row;
         foreach my $entry_ar (@{$self->find_node($row_ar, 'entry')}) {
-            #print "tbody entry_ar: $entry_ar\n";
             my $text=$self->pull_node_text($entry_ar, $NULL);
             $text=$self->text_wrap($text);
             push @row, $text;
@@ -452,7 +451,6 @@ sub tbody {
         push @{$self->{'_table'}{'tbody'}},\@row;
         #push @{$self->{'_table'}{'tbody'}},[map { undef } @row]
     }
-    #print "tbody done\n";
     return undef;
 
 }
@@ -460,23 +458,20 @@ sub tbody {
 sub table {
 
     my ($self, $data_ar)=@_;
-    #print "in table\n";
+    my $title=$self->pull_node_tag_text($data_ar, 'title', $NULL);
     my $thead_ar=$self->{'_table'}{'thead'};
     use Text::Table;
     #my $table_or=Text::Table->new((map {\"|", $_} @{$thead_ar}), \"|");
     my $table_or=Text::Table->new((map {\'|', $_} @{$thead_ar}), \'|');
 
-    
-    #print "new $table_or\n";
     my $tbody_ar=$self->{'_table'}{'tbody'};
     foreach my $row_ar (@{$tbody_ar}) {
-        #print "table row $row_ar\n";
         $table_or->load($row_ar);
     }
 
     my @table;
     push @table, $table_or->rule('-', '-');
-    push @table, $table_or->title;
+    push @table, $table_or->title();
     push @table, $table_or->rule('-', '-');
     my @row=$table_or->table();
     foreach my $row (1..$#row) {
@@ -484,15 +479,10 @@ sub table {
         #push @table, $table_or->body_rule(' ', ' ') unless ($_ == $#row);
     }
     push @table, $table_or->body_rule('-','-');
-    #print "table done\n";
-    #print $table_or;
     #print $self->_code($table_or->stringify());
     #my $table=$table_or->stringify();
-    #my @table=($table=~/^(.*)$/gm);
-    return $CR2 . join(undef, map {"${SP4}$_"} @table) . $CR2;
-    
+    return $title . $CR2 . join(undef, map {"${SP4}$_"} @table) . $CR2;
     #return $self->_code($table_or->stringify());
-    #die;
     
 }
 

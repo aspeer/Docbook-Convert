@@ -83,4 +83,7 @@ t/link4.pod
 t/entity.xml
 t/entity.md
 t/entity.pod
+t/table.xml
+t/table.md
+t/table.pod
 
