@@ -28,6 +28,7 @@ no warnings qw(uninitialized);
 #  External modules
 #
 use Docbook::Convert::Constant;
+use Docbook::Convert::Util;
 use Data::Dumper;
 
 
@@ -271,6 +272,7 @@ sub find_parent {
     }
     if (my $data_parent_ar=$data_ar->[$PRNT_IX]) {
         foreach my $tag (@{$tag_ar}) {
+            debug("look for tag $tag");
             if ((my $t=$data_parent_ar->[$NODE_IX]) eq $tag) {
                 return $data_parent_ar;
             }
@@ -288,11 +290,24 @@ sub image_getwidth {
     $self->load_imagemagick() ||
         return err ();
     my $width;
-    if (my $image=LWP::Simple::get($url)) {
+
+    my $ua = LWP::UserAgent->new;
+    $ua->timeout($LWP_TIMEOUT);
+    $ua->env_proxy;
+    my $code_or=$ua->get($url);
+    my $image;
+    if ($code_or->is_success) {
+        $image=$code_or->content;
+    }
+    else {
+        die err("failed to get URL '$url', %s", $code_or->status_line);
+    }
+    if ($image) {
         my $magick_or=Image::Magick->new(magick => 'jpg');
         $magick_or->BlobToImage($image);
         $width=$magick_or->Get('width');
     }
+    debug("width $width");
     return $width;
 
 }
@@ -309,7 +324,7 @@ sub load_imagemagick {
         return err ("unable to load Image::Magic module, $@");
     };
     eval {
-        require LWP::Simple;
+        require LWP::UserAgent;
     } || do {
         return err ("unable to load LWP::Simple module, $@");
     };

@@ -72,6 +72,7 @@ sub _image_build {
     my $alt_text2=$image_data_attr_hr->{'annotations'};
     my $alt_text=$alt_text1 || $alt_text2;
     my $url=$image_data_attr_hr->{'fileref'};
+    
 
     #  Generation Options
     #
@@ -386,6 +387,7 @@ sub mediaobject {
     my ($self, $data_ar)=@_;
 
     #if ($self->find_parent($data_ar, 'figure')) {
+    #  Are we delaying render ?
     if ($self->find_parent($data_ar, $MEDIAOBJECT_DELAY_RENDER_AR)) {
 
         #  render later

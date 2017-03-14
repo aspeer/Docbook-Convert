@@ -251,6 +251,11 @@ my $constant_local_fn="${module_fn}.local";
     #
     TABLE_WRAP_COLUMNS		=> 40,
     TABLE_WRAP_HUGE		=> 'overflow',
+    
+    
+    #  LWP Timeout
+    #
+    LWP_TIMEOUT	=> 10,
 
 
     #  Local constants override anything above

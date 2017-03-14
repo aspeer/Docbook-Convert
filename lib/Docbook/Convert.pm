@@ -294,7 +294,6 @@ sub render_recurse {
     #  Get tag name
     #
     my $tag=$data_ar->[$NODE_IX];
-    debug("tag $tag");
     
 
     #  Get attributes and look for anchor
@@ -306,6 +305,7 @@ sub render_recurse {
             $render_or->find_node_tag_text($data_ar, 'title|subtitle', $NULL);
         $anchor_title=$title || $subtitle;
         $render_or->{'_id'}{$anchor_id}=($anchor_title);
+        debug("anchor found: $anchor_title");
     }
     
     
@@ -314,7 +314,7 @@ sub render_recurse {
     #
     $render_or->{'_plaintext'}++ if
         $render_or->_plaintext($tag);
-    debug('plaintext %s', $render_or->{'_plaintext'});
+    debug('plaintext flag: %s', $render_or->{'_plaintext'});
 
 
     #  Render any children
@@ -323,6 +323,7 @@ sub render_recurse {
         foreach my $data_chld_ix (0..$#{$data_ar->[$CHLD_IX]}) {
             my $data_chld_ar=$data_ar->[$CHLD_IX][$data_chld_ix];
             if (ref($data_chld_ar)) {
+                debug("rendering child $data_chld_ar");
                 my $data=$self->render_recurse($data_chld_ar, $render_or);
                 $data_ar->[$CHLD_IX][$data_chld_ix]=$data;
             }
@@ -346,7 +347,7 @@ sub render_recurse {
     #
     if ($anchor_id) {
         my $anchor=($render_or->_anchor($anchor_id, $anchor_title) . $CR2) unless $NO_HTML;
-        debug("anchor: $anchor, render $render");
+        debug("creating anchor: $anchor, render $render");
         if (ref($render)) {
             unless($self->{'no_warn_unhandled'}) {
                 warn("warning - unable to add anchor #${anchor_id} for unhandled tag: $tag\n");
