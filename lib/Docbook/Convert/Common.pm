@@ -360,6 +360,8 @@ sub link {
     my ($self, $data_ar)=@_;
     my $attr_hr=$data_ar->[$ATTR_IX];
     my $url;
+    my $title=$attr_hr->{'annotations'};
+    my $text=$self->pull_node_text($data_ar, $NULL);
     if ($attr_hr->{'xlink:href'}) {
         $url=$attr_hr->{'xlink:href'};
     }
@@ -368,9 +370,9 @@ sub link {
     }
     elsif (my $linkend=$attr_hr->{'linkend'}) {
         $url="#${linkend}";
+        $text ||= $linkend;
     }
-    my $title=$attr_hr->{'annotations'};
-    my $text=$self->pull_node_text($data_ar, $NULL);
+    debug("link $title, $url");
     $text ||= $url;
     return $self->_link($url, $text, $title);
 }
