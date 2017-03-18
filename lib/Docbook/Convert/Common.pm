@@ -374,6 +374,9 @@ sub link {
     }
     debug("link $title, $url");
     $text ||= $url;
+    #  Add leading space in front of text if not present
+    #
+    $text=~/^\s+/ || ($text=$SP.$text);
     return $self->_link($url, $text, $title);
 }
 
@@ -709,7 +712,7 @@ sub ulink {
 sub uri {
     my ($self, $data_ar)=@_;
     my $text=$self->pull_node_text($data_ar, $NULL);
-    return "<${text}>";
+    return $SP . "<${text}>";
 }
 
 
