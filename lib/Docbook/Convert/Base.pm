@@ -117,6 +117,7 @@ sub pull_node_tag_text {
     #  Set flag so find_node_tag_text will destroy node after finding. Bit hacky.
     $self->{'_pull_node_tag_text'}++;
     my $text=$self->find_node_tag_text(@_);
+    debug($text);
     delete $self->{'_pull_node_tag_text'};
     return $text;
     
@@ -130,6 +131,7 @@ sub find_node_tag_text {
     unless (ref($tag_ar)) {
         $tag_ar=[split('\|', $tag_ar)];
     }
+    debug("tag_ar %s, join *$join*", Dumper($tag_ar));
     my @text;
     foreach my $tag (@{$tag_ar}) {
         my @tag;
@@ -137,6 +139,7 @@ sub find_node_tag_text {
         #print "find tag $tag\n";
         $self->find_node_tag_text_recurse($data_ar, $tag, \@tag) ||
             return err ();
+        debug('about to join %s with %s', Dumper(\@tag), Dumper($join));
         if (@tag) {
             if (ref($join) eq 'SCALAR') {
                 push @text, join(${$join}, @tag);
@@ -158,49 +161,12 @@ sub find_node_tag_text {
     #}
     #print Dumper(\@text);
     if (wantarray()) {
+        debug('return %s', Dumper(\@text));
         return @text;
     }
     else {
+        debug("return *$text[0]*");
         return $text[0];
-    }
-
-}
-
-
-sub find_node_tag_text0 {
-
-    my ($self, $data_ar, $tag_ar, $join)=@_;
-    $tag_ar ||= [$data_ar->[$NODE_IX]];
-    unless (ref($tag_ar)) {
-        $tag_ar=[split('\|', $tag_ar)];
-    }
-    my @text;
-    foreach my $tag (@{$tag_ar}) {
-
-        #$self->find_node_tag_text_recurse($data_ar, $tag, \@text) ||
-        #    return err ();
-        my @tag;
-        $self->find_node_tag_text_recurse($data_ar, $tag, \@tag) ||
-            return err ();
-        push @text, [@tag];
-    }
-    if (ref($join) eq 'SCALAR') {
-        return join(${$join}, @text);
-    }
-    elsif (ref($join) eq 'CODE') {
-        return $join->(\@text);
-    }
-    elsif ($join) {
-        return join($join, @text);
-    }
-    elsif (wantarray() && (@{$tag_ar} > 1)) {
-        return @text;
-    }
-    elsif (wantarray()) {
-        return @{$text[0]};
-    }
-    else {
-        return \@text;
     }
 
 }
@@ -367,3 +333,45 @@ sub AUTOLOAD {
 
 1;
 __END__
+
+#  Attic code
+#
+sub find_node_tag_text0 {
+
+    my ($self, $data_ar, $tag_ar, $join)=@_;
+    $tag_ar ||= [$data_ar->[$NODE_IX]];
+    unless (ref($tag_ar)) {
+        $tag_ar=[split('\|', $tag_ar)];
+    }
+    my @text;
+    foreach my $tag (@{$tag_ar}) {
+
+        #$self->find_node_tag_text_recurse($data_ar, $tag, \@text) ||
+        #    return err ();
+        my @tag;
+        $self->find_node_tag_text_recurse($data_ar, $tag, \@tag) ||
+            return err ();
+        push @text, [@tag];
+    }
+    if (ref($join) eq 'SCALAR') {
+        return join(${$join}, @text);
+    }
+    elsif (ref($join) eq 'CODE') {
+        return $join->(\@text);
+    }
+    elsif ($join) {
+        return join($join, @text);
+    }
+    elsif (wantarray() && (@{$tag_ar} > 1)) {
+        return @text;
+    }
+    elsif (wantarray()) {
+        return @{$text[0]};
+    }
+    else {
+        return \@text;
+    }
+
+}
+
+

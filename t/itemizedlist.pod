@@ -2,7 +2,7 @@
 
 =head1 1 Itemized List
 
-Itemized list inside para:
+Itemized list inside para: 
 
 =over
 

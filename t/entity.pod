@@ -2,6 +2,6 @@
 
 =head1 1 Entity Escapes
 
-Command C<<<< <perl> >>>> Text <perl>
+Command  C<<<< <perl> >>>>  Text <perl>
 
 =cut

@@ -370,13 +370,12 @@ sub link {
     }
     elsif (my $linkend=$attr_hr->{'linkend'}) {
         $url="#${linkend}";
+        #$text ||= $SP . $linkend;
         $text ||= $linkend;
     }
     debug("link $title, $url");
+    #$text ||= $SP . $url;
     $text ||= $url;
-    #  Add leading space in front of text if not present
-    #
-    $text=~/^\s+/ || ($text=$SP.$text);
     return $self->_link($url, $text, $title);
 }
 
@@ -420,7 +419,8 @@ sub orderedlist {
 sub para {
 
     my ($self, $data_ar)=@_;
-    my $text=$self->pull_node_text($data_ar, $NULL);
+    #my $text=$self->pull_node_text($data_ar, $NULL);
+    my $text=$self->pull_node_text($data_ar, $SP);
     return $text;
 
 }

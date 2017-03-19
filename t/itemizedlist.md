@@ -1,6 +1,6 @@
 # 1 Itemized List #
 
-Itemized list inside para:
+Itemized list inside para: 
 
 * Itemized list item 1
 

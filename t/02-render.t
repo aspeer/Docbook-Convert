@@ -127,12 +127,13 @@ foreach my $test_fn (sort {$a cmp $b } @test_fn) {
         else {
             # Try to write failed file out
             #
-            if (my $fail_fh=IO::File->new("${ref_fn}.fail", O_WRONLY|O_TRUNC|O_CREAT)) {
+            my ($ext)=($ref_fn=~/\.(\w+)$/);
+            if (my $fail_fh=IO::File->new("${ref_fn}.fail.${ext}", O_WRONLY|O_TRUNC|O_CREAT)) {
                 print $fail_fh $output;
                 $fail_fh->close();
-                diag("wrote failed test output to ${ref_sn}.fail");
+                diag("wrote failed test output to ${ref_sn}.fail.${ext}");
             }
-            fail("render $handler FAIL: $test_sn, wrote failed test output to ${ref_sn}.fail");
+            fail("render $handler FAIL: $test_sn, wrote failed test output to ${ref_sn}.fail.${ext}");
         }
 
 

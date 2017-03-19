@@ -1,6 +1,6 @@
 # 1 Section 1 #
 
-Text with [link](#section2) to section 2 inline
+Text with  [link](#section2)  to section 2 inline
 
 <a name="section2"></a>
 

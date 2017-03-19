@@ -114,10 +114,12 @@ sub parse {
 
         #  Text ?
         #
-        unless (($elt_child_or->tag() eq '#PCDATA') || ($elt_child_or->tag() eq '#CDATA')) {
+        my $child_tag=$elt_child_or->tag();
+        unless (($child_tag eq '#PCDATA') || ($child_tag eq '#CDATA')) {
 
             # No - recurse. Need new data container
             #
+            debug("recurse for child tag: $child_tag");
             my $data_child_ar=$self->data_ar();
             $self->parse($data_child_ar, $elt_child_or, $data_ar);
             push @{$data_ar->[$CHLD_IX]}, $data_child_ar;
@@ -129,6 +131,7 @@ sub parse {
             if ($tag eq 'para') {
                 $text=&whitespace_clean($text);
             }
+            debug("$tag: *$text*");
             my $data_child_ar=
                 $self->data_ar('text', [$text], undef, undef, undef, $data_ar);
             push @{$data_ar->[$CHLD_IX]}, $data_child_ar;

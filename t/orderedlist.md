@@ -1,6 +1,6 @@
 # 1 Ordered List #
 
-Ordered list inside para:
+Ordered list inside para: 
 
 1. Ordered list item 1
 

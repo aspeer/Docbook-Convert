@@ -2,7 +2,7 @@
 
 =head1 1 Section 1
 
-Text with L<link|"Section-2"> to section 2 inline
+Text with  L<link|"Section-2">  to section 2 inline
 
 =begin HTML
 

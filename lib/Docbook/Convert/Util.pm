@@ -84,6 +84,7 @@ sub dump_ar {
 sub whitespace_clean {
     
     my $text=shift();
+    debug("whitespace_clean *$text*");
     $text=~s/^\t//gm;
     my @para;
     my @text=($text=~/^(.*)$/gm);

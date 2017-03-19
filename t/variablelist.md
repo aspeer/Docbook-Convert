@@ -1,6 +1,6 @@
 # 1 Variable List #
 
-Variable list inside para:
+Variable list inside para: 
 
 * **Variable List Item 1**
 

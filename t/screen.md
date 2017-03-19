@@ -12,4 +12,4 @@ Para after screen
     command in screen line 1
     command in screen line 2
 
-Para after command in screen
+ Para after command in screen
