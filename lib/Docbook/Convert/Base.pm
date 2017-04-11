@@ -331,6 +331,12 @@ sub AUTOLOAD {
 }
 
 
+sub DESTROY {
+
+    1;
+    
+}
+
 1;
 __END__
 
