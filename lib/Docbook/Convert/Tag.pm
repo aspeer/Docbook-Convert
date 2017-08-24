@@ -40,7 +40,7 @@ use base Docbook::Convert::Base;
 #  Version information in a format suitable for CPAN etc. Must be
 #  all on one line
 #
-$VERSION='0.018';
+$VERSION='0.019';
 
 
 #  Make synonyms
